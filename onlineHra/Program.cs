@@ -1,9 +1,12 @@
-﻿namespace onlineHra;
+﻿using onlineHra.Networking;
+
+namespace onlineHra;
 
 class Program
 {
     static void Main(string[] args)
     {
-        Console.WriteLine("Hello, World!");
+        new Server(65525);
+        Console.Read();
     }
 }
