@@ -5,7 +5,7 @@ namespace onlineHra.Commands
 {
     internal class HelpCommand : ICommand
     {
-        public string Execute(TcpClient client)
+        public async Task<string> Execute(TcpClient client)
         {
             var sb = new StringBuilder();
 
@@ -33,7 +33,7 @@ namespace onlineHra.Commands
 
             sb.AppendLine("help");
             sb.AppendLine("  - displays this help");
-
+            
             return sb.ToString();
         }
     }

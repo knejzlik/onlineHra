@@ -6,7 +6,7 @@ class Program
 {
     static void Main(string[] args)
     {
-        new Server(65525);
+        new Server(65525).Start();
         Console.Read();
     }
 }

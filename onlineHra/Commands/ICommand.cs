@@ -4,6 +4,6 @@ namespace onlineHra;
 
 public interface ICommand
 {
-    public string Execute(TcpClient client);
+    public Task<string> Execute(TcpClient client);
 
 }
