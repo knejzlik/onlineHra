@@ -21,6 +21,10 @@ public class Server
 
     public Server(int port)
     {
+        // Set working directory to ensure Data folder is found
+        var baseDir = AppContext.BaseDirectory;
+        Directory.SetCurrentDirectory(baseDir);
+        
         _worldService = new WorldService("Data");
         _playerService = new PlayerService("Data/players.json");
         _logger = new LoggingService("Data/server.log");

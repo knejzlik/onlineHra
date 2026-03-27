@@ -18,9 +18,42 @@ public class WorldService
 
     private void LoadWorld()
     {
-        var roomsFile = Path.Combine(_dataPath, "rooms.json");
-        var itemsFile = Path.Combine(_dataPath, "items.json");
-        var npcsFile = Path.Combine(_dataPath, "npcs.json");
+        // Get the base directory (where the executable is located)
+        var baseDir = AppContext.BaseDirectory;
+        
+        // Try multiple possible paths for the Data folder
+        var possiblePaths = new[]
+        {
+            _dataPath,  // Original path
+            Path.Combine(baseDir, _dataPath),  // Relative to executable
+            Path.Combine(Directory.GetCurrentDirectory(), _dataPath),  // Relative to current directory
+            Path.Combine(baseDir, "..", "..", "..", _dataPath),  // Relative to project root (for dev)
+            "Data",  // Fallback to just "Data"
+            Path.Combine(baseDir, "Data"),
+            Path.Combine(Directory.GetCurrentDirectory(), "Data")
+        };
+
+        string? foundPath = null;
+        foreach (var path in possiblePaths)
+        {
+            if (File.Exists(Path.Combine(path, "rooms.json")))
+            {
+                foundPath = path;
+                break;
+            }
+        }
+
+        if (foundPath == null)
+        {
+            Console.WriteLine("WARNING: Could not find rooms.json file. Room system will not work properly.");
+            return;
+        }
+
+        var roomsFile = Path.Combine(foundPath, "rooms.json");
+        var itemsFile = Path.Combine(foundPath, "items.json");
+        var npcsFile = Path.Combine(foundPath, "npcs.json");
+
+        Console.WriteLine($"Loading world data from: {foundPath}");
 
         if (File.Exists(roomsFile))
         {
@@ -32,6 +65,7 @@ public class WorldService
                 {
                     _rooms[room.Id] = room;
                 }
+                Console.WriteLine($"Loaded {rooms.Count} rooms.");
             }
         }
 
@@ -45,6 +79,7 @@ public class WorldService
                 {
                     _items[item.Id] = item;
                 }
+                Console.WriteLine($"Loaded {items.Count} items.");
             }
         }
 
@@ -58,6 +93,7 @@ public class WorldService
                 {
                     _npcs[npc.Id] = npc;
                 }
+                Console.WriteLine($"Loaded {npcs.Count} NPCs.");
             }
         }
     }
