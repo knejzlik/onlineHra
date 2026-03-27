@@ -1,0 +1,22 @@
+[
+  {
+    "Id": "guard",
+    "Name": "Strážce",
+    "Description": "Starý strážce v rezavé zbroji. Vypadá, že tu stojí už stovky let.",
+    "Dialogs": [
+      { "Trigger": "default", "Response": "Stojím zde již věky. Hledáš poklad? Projeď chodbou na sever, ale pozor na pasti." },
+      { "Trigger": "poklad", "Response": "Poklad je ukryt v místnosti na severu. Ale potřebuješ klíč, který leží v chodbě." },
+      { "Trigger": "klíč", "Response": "Klíč? Viděl jsem ho ležet v chodbě. Někdo ho tam asi upustil." }
+    ]
+  },
+  {
+    "Id": "sage",
+    "Name": "Mudrc",
+    "Description": "Starý muž s dlouhým bílým vousem. Jeho oči září moudrostí.",
+    "Dialogs": [
+      { "Trigger": "default", "Response": "Vítej, cestovateli. Hledáš zlatý pohár? Přeji ti hodně štěstí na tvé cestě." },
+      { "Trigger": "pohár", "Response": "Zlatý pohár má moc splnit jedno přání. Ale mnoho těch, kteří po něm pátrali, se již nevrátilo." },
+      { "Trigger": "cesta", "Response": "Tvá cesta začíná v malé kamenné místnosti. Pokračuj na sever a najdeš, co hledáš." }
+    ]
+  }
+]

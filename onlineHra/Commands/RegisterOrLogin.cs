@@ -1,25 +1,19 @@
 using System.IO;
 using System.Net.Sockets;
 using System.Threading.Tasks;
+using onlineHra.Services;
 
 namespace onlineHra.Commands;
 
 public class RegisterOrLogin : ICommand 
 {
-    public async Task<string> Execute(TcpClient client)
+    public async Task<string> Execute(TcpClient client, PlayerService playerService)
     {
         var tempReader = new StreamReader(client.GetStream());
         var tempWriter = new StreamWriter(client.GetStream()) { AutoFlush = true };
         
-        string filePath = "PayerSave.csv";
         bool nextStep = true;
         int state = 0;
-
-        // Ensure the file exists
-        if (!File.Exists(filePath))
-        {
-            File.Create(filePath).Close();
-        }
 
         while (nextStep)
         {
@@ -54,28 +48,6 @@ public class RegisterOrLogin : ICommand
                     var username = await tempReader.ReadLineAsync();
                     if (string.IsNullOrWhiteSpace(username)) continue;
 
-                    bool usableUsername = true;
-                    
-                    using (var fileReader = new StreamReader(filePath))
-                    {
-                        string? line;
-                        while ((line = await fileReader.ReadLineAsync()) != null)
-                        {
-                            var split = line.Split(';');
-                            if (split.Length > 0 && split[0].ToLower() == username.ToLower())
-                            {
-                                usableUsername = false;
-                                break;
-                            }
-                        }
-                    }
-
-                    if (!usableUsername)
-                    {
-                        await tempWriter.WriteLineAsync("Username already in use.");
-                        continue;
-                    }
-
                     await tempWriter.WriteLineAsync("Enter password:");
                     await tempWriter.WriteAsync(">>> ");
                     var password = await tempReader.ReadLineAsync();
@@ -90,18 +62,15 @@ public class RegisterOrLogin : ICommand
                         continue;
                     }
 
-                    // Format the full player line. If you add default stats later (e.g., Level 1, 100 HP), add them here!
-                    string newPlayerLine = $"{username};{password}";
-
-                    using (var fileWriter = new StreamWriter(filePath, append: true))
+                    if (!playerService.Register(username, password))
                     {
-                        await fileWriter.WriteLineAsync(newPlayerLine);
+                        await tempWriter.WriteLineAsync("Username already in use.");
+                        continue;
                     }
 
                     await tempWriter.WriteLineAsync("Registration successful!");
                     
-                    // Return the newly created line
-                    return newPlayerLine; 
+                    return $"{username};{password}"; 
                 }
             }
             case 2: // Login
@@ -117,30 +86,12 @@ public class RegisterOrLogin : ICommand
                     await tempWriter.WriteAsync(">>> ");
                     var password = await tempReader.ReadLineAsync();
 
-                    string? matchedPlayerLine = null;
-                    
-                    using (var fileReader = new StreamReader(filePath))
-                    {
-                        string? line;
-                        while ((line = await fileReader.ReadLineAsync()) != null)
-                        {
-                            var split = line.Split(';');
-                            if (split.Length >= 2 && 
-                                split[0].ToLower() == username.ToLower() && 
-                                split[1] == password)
-                            {
-                                // Instead of just setting a boolean, we grab the whole string
-                                matchedPlayerLine = line; 
-                                break;
-                            }
-                        }
-                    }
+                    var playerState = playerService.Login(username, password);
 
-                    // If we found a match, matchedPlayerLine won't be null
-                    if (matchedPlayerLine != null)
+                    if (playerState != null)
                     {
                         await tempWriter.WriteLineAsync("Login successful!");
-                        return matchedPlayerLine;
+                        return $"{playerState.Username};{playerState.PasswordHash}";
                     }
                     
                     await tempWriter.WriteLineAsync("Invalid username or password. Try again.");
@@ -149,5 +100,10 @@ public class RegisterOrLogin : ICommand
         }
 
         return string.Empty;
+    }
+
+    public async Task<string> Execute(TcpClient client)
+    {
+        return await Execute(client, new PlayerService());
     }
 }

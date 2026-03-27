@@ -1,0 +1,34 @@
+[
+  {
+    "Id": "start",
+    "Name": "Startovní místnost",
+    "Description": "Jsi v malé kamenné místnosti. Stěny jsou vlhké a ve vzduchu je cítit mech. Na severu vidíš východ.",
+    "Exits": { "north": "hallway" },
+    "Items": ["torch"],
+    "Npcs": []
+  },
+  {
+    "Id": "hallway",
+    "Name": "Dlouhá chodba",
+    "Description": "Dlouhá temná chodba táhnoucí se od severu k jihu. Na východě jsou dveře pokryté prachem.",
+    "Exits": { "south": "start", "north": "treasure_room", "east": "library" },
+    "Items": ["key"],
+    "Npcs": ["guard"]
+  },
+  {
+    "Id": "library",
+    "Name": "Stará knihovna",
+    "Description": "Místnost plná starých knih. Prach pokrývá každý povrch. V rohu stojí starý mudrc.",
+    "Exits": { "west": "hallway" },
+    "Items": ["book"],
+    "Npcs": ["sage"]
+  },
+  {
+    "Id": "treasure_room",
+    "Name": "Pokladnice",
+    "Description": "Nádherná místnost s truhlou uprostřed. Zlaté mince se lesknou ve světle pochodní. Toto je cíl tvé cesty!",
+    "Exits": { "south": "hallway" },
+    "Items": ["golden_chalice"],
+    "Npcs": []
+  }
+]

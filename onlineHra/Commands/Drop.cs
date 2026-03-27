@@ -1,0 +1,75 @@
+using System.Net.Sockets;
+using System.Text;
+using onlineHra.Models;
+using onlineHra.Services;
+
+namespace onlineHra.Commands;
+
+public class DropCommand : ICommand
+{
+    private readonly WorldService _worldService;
+    private readonly PlayerService _playerService;
+    private readonly LoggingService _logger;
+
+    public DropCommand(WorldService worldService, PlayerService playerService, LoggingService logger)
+    {
+        _worldService = worldService;
+        _playerService = playerService;
+        _logger = logger;
+    }
+
+    public DropCommand() : this(new WorldService(), new PlayerService(), new LoggingService()) { }
+
+    public async Task<string> Execute(TcpClient client)
+    {
+        return await Execute(client, null, null, null, null);
+    }
+
+    public async Task<string> Execute(TcpClient client, Networking.Player? player, WorldService? worldService, PlayerService? playerService, string? args = null)
+    {
+        var ws = worldService ?? _worldService;
+        var ps = playerService ?? _playerService;
+
+        if (player == null || string.IsNullOrEmpty(args))
+        {
+            return "Usage: drop <item name>";
+        }
+
+        var currentRoom = ws.GetRoom(player.CurrentRoomId);
+        if (currentRoom == null)
+        {
+            return "Error: Current room not found.";
+        }
+
+        var itemName = args.ToLower().Trim();
+        
+        // Find item in inventory
+        string? foundItemId = null;
+        Item? foundItem = null;
+        
+        foreach (var itemId in player.State.Inventory.ToList())
+        {
+            var item = ws.GetItem(itemId);
+            if (item != null && item.Name.ToLower().Contains(itemName))
+            {
+                foundItemId = itemId;
+                foundItem = item;
+                break;
+            }
+        }
+
+        if (foundItemId == null || foundItem == null)
+        {
+            return $"You don't have '{args}' in your inventory.";
+        }
+
+        // Remove from inventory and add to room
+        player.State.Inventory.Remove(foundItemId);
+        currentRoom.Items.Add(foundItemId);
+        ps.SavePlayer(player.State);
+
+        _logger.LogCommand(player.State.Username, $"drop {foundItemId}");
+
+        return $"You dropped the {foundItem.Name}.";
+    }
+}
