@@ -32,10 +32,24 @@ public class ExploreCommand : ICommand
             return "Error: Player not found.";
         }
 
+        // Ensure player's CurrentRoomId is synced with State
+        if (string.IsNullOrEmpty(player.CurrentRoomId))
+        {
+            player.CurrentRoomId = player.State.CurrentRoomId;
+        }
+        
+        // Validate room exists, reset to start if not
         var room = ws.GetRoom(player.CurrentRoomId);
         if (room == null)
         {
-            return "Error: Current room not found.";
+            player.CurrentRoomId = "start";
+            player.State.CurrentRoomId = "start";
+            room = ws.GetRoom("start");
+            
+            if (room == null)
+            {
+                return "Error: Room system not initialized. Check rooms.json file.";
+            }
         }
 
         var sb = new StringBuilder();

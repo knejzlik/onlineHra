@@ -44,6 +44,13 @@ public class Player
         var playerState = playerService.GetPlayer(username);
         if (playerState == null) return null;
         
+        // Ensure player has a valid current room
+        if (string.IsNullOrEmpty(playerState.CurrentRoomId))
+        {
+            playerState.CurrentRoomId = "start";
+            playerService.SavePlayer(playerState);
+        }
+        
         return new Player(client, playerState);
     }
 

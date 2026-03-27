@@ -1,51 +1,48 @@
 ```
 # Build artifacts
-*.obj
-*.exe
+bin/
+obj/
 *.dll
+*.exe
 *.pdb
-*.user
-*.userosscache
-*.suo
-*.cache
-*.ilk
-*.exp
-*.lib
-*.tlog
-*.iobj
-*.ipdb
-*.builds
-*.built
-*.log
+*.so
+*.dylib
+*.jar
+*.war
+*.class
 
 # Dependencies
 packages/
-bin/
-obj/
-out/
+node_modules/
+vendor/
+
+# Logs
+*.log
+logs/
 
 # Environment
 .env
 .env.local
-*.env.*
+.env.*
 
 # Editors
-.vs/
 .vscode/
+.idea/
 *.swp
 *.swo
 
-# OS generated files
+# OS
 .DS_Store
 Thumbs.db
-ehthumbs.db
-Icon?
-._*
 
-# Logs
-*.log
+# Test and coverage
+coverage/
+htmlcov/
+*.coverage
+.nyc_output/
 
-# User-specific files
-*.userprefs
-*.sln.docstates
+# Temporary files
+*.tmp
+*.temp
+*~
 ```

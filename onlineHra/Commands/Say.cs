@@ -28,6 +28,27 @@ public class SayCommand : ICommand
             return "Usage: rekni <message> - sends a message to all players in the same room";
         }
 
+        // Ensure player's CurrentRoomId is synced with State
+        if (string.IsNullOrEmpty(player.CurrentRoomId))
+        {
+            player.CurrentRoomId = player.State.CurrentRoomId;
+        }
+
+        var ws = worldService ?? new WorldService();
+        var currentRoom = ws.GetRoom(player.CurrentRoomId);
+        if (currentRoom == null)
+        {
+            // Reset to start room
+            player.CurrentRoomId = "start";
+            player.State.CurrentRoomId = "start";
+            currentRoom = ws.GetRoom("start");
+            
+            if (currentRoom == null)
+            {
+                return "Error: Room system not initialized. Check rooms.json file.";
+            }
+        }
+
         return $"You say: \"{args}\"";
     }
 }

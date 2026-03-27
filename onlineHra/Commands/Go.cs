@@ -35,10 +35,24 @@ public class GoCommand : ICommand
             return "Usage: go <direction> (north, south, east, west, up, down)";
         }
 
+        // Ensure player's CurrentRoomId is synced with State
+        if (string.IsNullOrEmpty(player.CurrentRoomId))
+        {
+            player.CurrentRoomId = player.State.CurrentRoomId;
+        }
+
         var currentRoom = ws.GetRoom(player.CurrentRoomId);
         if (currentRoom == null)
         {
-            return "Error: Current room not found.";
+            // Reset to start room
+            player.CurrentRoomId = "start";
+            player.State.CurrentRoomId = "start";
+            currentRoom = ws.GetRoom("start");
+            
+            if (currentRoom == null)
+            {
+                return "Error: Room system not initialized. Check rooms.json file.";
+            }
         }
 
         var direction = args.ToLower().Trim();
