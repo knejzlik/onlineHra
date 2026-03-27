@@ -27,7 +27,7 @@ public class TalkCommand : ICommand
 
         if (player == null || string.IsNullOrEmpty(args))
         {
-            return "Usage: talk <character name>";
+            return "Usage: talk <character name> [topic]";
         }
 
         var currentRoom = ws.GetRoom(player.CurrentRoomId);
@@ -36,7 +36,9 @@ public class TalkCommand : ICommand
             return "Error: Current room not found.";
         }
 
-        var targetName = args.ToLower().Trim();
+        var parts = args.Split(' ', 2);
+        var targetName = parts[0].ToLower().Trim();
+        var topic = parts.Length > 1 ? parts[1].ToLower().Trim() : "default";
         
         // Find NPC by name
         Npc? targetNpc = null;
@@ -52,12 +54,13 @@ public class TalkCommand : ICommand
 
         if (targetNpc == null)
         {
-            return $"There is no '{args}' here to talk to.";
+            return $"There is no '{parts[0]}' here to talk to.";
         }
 
-        // Get default dialog response
-        var response = targetNpc.Dialogs.FirstOrDefault(d => d.Trigger == "default")?.Response 
-            ?? $"{targetNpc.Name} doesn't have anything to say.";
+        // Try to find dialog response by topic, fallback to default
+        var response = targetNpc.Dialogs.FirstOrDefault(d => d.Trigger.ToLower() == topic)?.Response 
+            ?? targetNpc.Dialogs.FirstOrDefault(d => d.Trigger == "default")?.Response 
+            ?? $"{targetNpc.Name} doesn't have anything to say about that.";
 
         return $"{targetNpc.Name} says: \"{response}\"";
     }
