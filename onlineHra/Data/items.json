@@ -1,0 +1,26 @@
+[
+  {
+    "Id": "torch",
+    "Name": "Pochodeň",
+    "Description": "Stará dřevěná pochodeň, která ještě hoří.",
+    "Weight": 2
+  },
+  {
+    "Id": "key",
+    "Name": "Starý klíč",
+    "Description": "Rezavý železný klíč. Možná otevře nějaké dveře.",
+    "Weight": 1
+  },
+  {
+    "Id": "book",
+    "Name": "Zaprášená kniha",
+    "Description": "Kniha starých legend. Obsahuje informace o ztraceném pokladu.",
+    "Weight": 3
+  },
+  {
+    "Id": "golden_chalice",
+    "Name": "Zlatý pohár",
+    "Description": "Nádherný zlatý pohár zdobený drahokamy. Toto je legendární artefakt!",
+    "Weight": 5
+  }
+]

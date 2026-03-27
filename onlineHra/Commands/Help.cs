@@ -13,8 +13,9 @@ namespace onlineHra.Commands
             sb.AppendLine("List of commands:");
             sb.AppendLine();
 
-            sb.AppendLine("go <direction/room>");
-            sb.AppendLine("  - move between rooms");
+            sb.AppendLine("go <direction>");
+            sb.AppendLine("  - move between rooms (north/south/east/west or n/s/e/w)");
+            sb.AppendLine("  - Czech: sever/jih/vychod/zapad or s/j/v/z");
 
             sb.AppendLine("explore");
             sb.AppendLine("  - shows information about the current room");
@@ -34,7 +35,7 @@ namespace onlineHra.Commands
             sb.AppendLine("help");
             sb.AppendLine("  - displays this help");
             
-            return sb.ToString();
+            return await Task.FromResult(sb.ToString());
         }
     }
 }

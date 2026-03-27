@@ -2,9 +2,9 @@
 using System.Text;
 using System.Threading.Tasks;
 using onlineHra.Commands;
+using onlineHra.Services;
 using System.Collections.Generic;
 using System.Linq;
-using System;
 
 namespace onlineHra.Networking;
 
@@ -12,26 +12,41 @@ public class Server
 {
     private TcpListener server;
     private HashSet<Player> connections;
-    private Dictionary<string, ICommand> commands;
+    private WorldService _worldService;
+    private PlayerService _playerService;
+    private LoggingService _logger;
     
     // We need an object to lock our connections list so multiple threads don't crash it
     private readonly object _connectionsLock = new object();
 
     public Server(int port)
     {
+        _worldService = new WorldService("Data");
+        _playerService = new PlayerService("Data/players.json");
+        _logger = new LoggingService("Data/server.log");
+        
         commands = new Dictionary<string, ICommand>();
         connections = new HashSet<Player>();
         server = new TcpListener(System.Net.IPAddress.Any, port);
-        
-        // Add commands BEFORE starting loops, avoiding race conditions
-        commands.Add("help", new HelpCommand()); 
     }
+
+    private Dictionary<string, ICommand> commands;
 
     // Move the starting logic out of the constructor
     public void Start()
     {
         server.Start();
-        Console.WriteLine("Server spusten");
+        Console.WriteLine("Server started on port 65525");
+        _logger.LogInfo("Server started on port 65525");
+        
+        // Initialize commands with services
+        commands.Add("help", new HelpCommand());
+        commands.Add("explore", new ExploreCommand(_worldService, _logger));
+        commands.Add("go", new GoCommand(_worldService, _playerService, _logger));
+        commands.Add("inventory", new InventoryCommand(_worldService, _playerService));
+        commands.Add("take", new TakeCommand(_worldService, _playerService, _logger));
+        commands.Add("drop", new DropCommand(_worldService, _playerService, _logger));
+        commands.Add("talk", new TalkCommand(_worldService));
         
         // Use discards (_) to fire-and-forget these loops safely
         _ = AcceptLoopAsync();
@@ -55,7 +70,13 @@ public class Server
         try
         {
             // Fully await the connection/registration process asynchronously
-            Player p = await Player.Connect(tcpc);
+            Player? p = await Player.Connect(tcpc, _playerService);
+            
+            if (p == null)
+            {
+                tcpc.Close();
+                return;
+            }
 
             // HashSets are not thread-safe. We must lock it when modifying.
             lock (_connectionsLock)
@@ -63,11 +84,20 @@ public class Server
                 connections.Add(p);
             }
 
+            _logger.LogPlayerConnect(p.State.Username);
+            
+            // Send welcome message and initial room description
+            await p.SendMessageAsync("Welcome to the MUD game!");
+            var exploreCmd = new ExploreCommand(_worldService, _logger);
+            var welcomeMsg = await exploreCmd.Execute(tcpc, p, _worldService);
+            await p.SendMessageAsync(welcomeMsg);
+
             // Start the infinite command loop for this specific player
             await ClientLoopAsync(p);
         }
         catch (Exception ex)
         {
+            _logger.LogError($"A player failed to connect or register: {ex.Message}");
             Console.WriteLine($"A player failed to connect or register: {ex.Message}");
         }
     }
@@ -85,21 +115,71 @@ public class Server
                 await writer.WriteAsync(">>> ");
                 string? inp = await reader.ReadLineAsync();
                 
-
-                Console.WriteLine($"Received: {inp}");
-                
-                if (inp.ToLower() == "help")
+                if (inp == null)
                 {
-                    // Ensure the command is executed and written properly
-                    string response = await commands["help"].Execute(client.Client);
-                    await writer.WriteAsync(response + "\n");
+                    break; // Client disconnected
                 }
+
+                inp = inp.Trim();
+                if (string.IsNullOrEmpty(inp))
+                {
+                    continue;
+                }
+
+                _logger.LogCommand(client.State.Username, inp);
+                Console.WriteLine($"[{client.State.Username}] Received: {inp}");
+                
+                // Parse command and arguments
+                var parts = inp.Split(' ', 2);
+                var commandName = parts[0].ToLower();
+                var args = parts.Length > 1 ? parts[1] : null;
+
+                string response;
+                
+                if (commands.TryGetValue(commandName, out var cmd))
+                {
+                    response = await ExecuteCommand(cmd, client, commandName, args);
+                }
+                else
+                {
+                    response = $"Unknown command '{commandName}'. Type 'help' for available commands.";
+                }
+                
+                await writer.WriteAsync(response + "\n");
             }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            // Handle unexpected socket drops
+            _logger.LogWarning($"Client loop error for {client.State.Username}: {ex.Message}");
         }
+        finally
+        {
+            // Save player state on disconnect
+            _playerService.SavePlayer(client.State);
+            _logger.LogPlayerDisconnect(client.State.Username);
+            
+            lock (_connectionsLock)
+            {
+                connections.Remove(client);
+            }
+            
+            client.Disconnect();
+        }
+    }
+
+    private async Task<string> ExecuteCommand(ICommand cmd, Player player, string commandName, string? args)
+    {
+        return commandName switch
+        {
+            "help" => await cmd.Execute(player.Client),
+            "explore" => await ((ExploreCommand)cmd).Execute(player.Client, player, _worldService),
+            "go" => await ((GoCommand)cmd).Execute(player.Client, player, _worldService, _playerService, args),
+            "inventory" => await ((InventoryCommand)cmd).Execute(player.Client, player, _worldService, _playerService),
+            "take" => await ((TakeCommand)cmd).Execute(player.Client, player, _worldService, _playerService, args),
+            "drop" => await ((DropCommand)cmd).Execute(player.Client, player, _worldService, _playerService, args),
+            "talk" => await ((TalkCommand)cmd).Execute(player.Client, player, _worldService, args),
+            _ => await cmd.Execute(player.Client)
+        };
     }
 
     private void Disconnect(Player client)
@@ -126,6 +206,8 @@ public class Server
                 
                 foreach (var client in disconnectedPlayers)
                 {
+                    _logger.LogPlayerDisconnect(client.State.Username);
+                    _playerService.SavePlayer(client.State);
                     Disconnect(client);
                 }
             }

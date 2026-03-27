@@ -1,5 +1,27 @@
+```
+# Build artifacts
+*.dll
+*.exe
+*.pdb
+*.config
 bin/
 obj/
-/packages/
-riderModule.iml
-/_ReSharper.Caches/
+
+# Dependencies
+packages/
+node_modules/
+
+# Logs
+*.log
+
+# Environment
+.env
+.env.local
+*.env.*
+
+# Editors
+.vscode/
+.idea/
+*.userprefs
+*.user
+```

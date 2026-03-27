@@ -1,5 +1,5 @@
 using System.Net.Sockets;
-using onlineHra.Commands;
+using onlineHra.Models;
 
 namespace onlineHra.Networking;
 
@@ -8,14 +8,14 @@ public class Player
     public TcpClient Client { get; set; }
     public StreamReader Reader { get; set; }
     public StreamWriter Writer { get; set; }
-    public String Username { get; set; }
-    public String Password { get; set; }
+    public PlayerState State { get; set; }
+    public string CurrentRoomId { get; set; } = "start";
 
-    public Player(TcpClient client, String username, String password)
+    public Player(TcpClient client, PlayerState state)
     {
         Client = client;
-        Username = username;
-        Password = password;
+        State = state;
+        CurrentRoomId = state.CurrentRoomId;
         Reader = new StreamReader(Client.GetStream());
         Writer = new StreamWriter(Client.GetStream());
     }
@@ -25,20 +25,29 @@ public class Player
         Writer.AutoFlush = true;
         Writer.WriteLine(message);
     }
+    
     public async Task SendMessageAsync(String message)
     {
         Writer.AutoFlush = true;
         await Writer.WriteLineAsync(message);
     }
 
-    public static async Task<Player> Connect(TcpClient client)
+    public static async Task<Player?> Connect(TcpClient client, Services.PlayerService playerService)
     {
-        var save = await new RegisterOrLogin().Execute(client);
+        var save = await new Commands.RegisterOrLogin().Execute(client, playerService);
+        if (string.IsNullOrEmpty(save)) return null;
+        
         var splited = save.Split(';');
-        return new Player(client, splited[0], splited[1]);
+        if (splited.Length < 2) return null;
+        
+        var username = splited[0];
+        var playerState = playerService.GetPlayer(username);
+        if (playerState == null) return null;
+        
+        return new Player(client, playerState);
     }
 
-    public  void Disconnect()
+    public void Disconnect()
     {
         Client.Close();
     }
