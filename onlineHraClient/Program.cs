@@ -6,7 +6,7 @@ class Program
 {
     static string currentInput = "";
     static int cursorPosition = 0;
-    static object lockObj = new object();
+    static readonly object lockObj = new object();
 
     static async Task Main(string[] args)
     {
@@ -43,22 +43,28 @@ class Program
                         var line = await reader.ReadLineAsync();
                         if (line == null) break;
                         
+                        // Capture input state under lock, then do console operations outside
+                        string capturedInput;
+                        int capturedCursor;
                         lock (lockObj)
                         {
-                            // Save cursor position and clear current line
-                            int currentLine = Console.CursorTop;
-                            Console.SetCursorPosition(0, currentLine);
-                            Console.Write(new string(' ', Console.WindowWidth));
-                            Console.SetCursorPosition(0, currentLine);
-                            
-                            // Print the server message above
-                            Console.WriteLine(line);
-                            
-                            // Re-display the prompt and current input
-                            Console.Write(">>> ");
-                            Console.Write(currentInput);
-                            Console.SetCursorPosition(4 + cursorPosition, currentLine + 1);
+                            capturedInput = currentInput;
+                            capturedCursor = cursorPosition;
                         }
+                        
+                        // Save cursor position and clear current line
+                        int currentLine = Console.CursorTop;
+                        Console.SetCursorPosition(0, currentLine);
+                        Console.Write(new string(' ', Console.WindowWidth));
+                        Console.SetCursorPosition(0, currentLine);
+                        
+                        // Print the server message above
+                        Console.WriteLine(line);
+                        
+                        // Re-display the prompt and current input
+                        Console.Write(">>> ");
+                        Console.Write(capturedInput);
+                        Console.SetCursorPosition(4 + capturedCursor, currentLine + 1);
                     }
                 }
                 catch (Exception ex)
