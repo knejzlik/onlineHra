@@ -75,6 +75,9 @@ class Program
             
             // Send user input with custom character-by-character reading
             Console.Write(">>> ");
+            string? inputToSend = null;
+            bool shouldExit = false;
+            
             while (true)
             {
                 var key = Console.ReadKey(true);
@@ -84,18 +87,14 @@ class Program
                     if (key.Key == ConsoleKey.Enter)
                     {
                         Console.WriteLine();
-                        var input = currentInput;
+                        inputToSend = currentInput;
                         currentInput = "";
                         cursorPosition = 0;
                         
-                        if (input.ToLower() == "quit" || input.ToLower() == "exit")
+                        if (inputToSend.ToLower() == "quit" || inputToSend.ToLower() == "exit")
                         {
-                            await writer.WriteLineAsync(input);
-                            break;
+                            shouldExit = true;
                         }
-                        
-                        await writer.WriteLineAsync(input);
-                        Console.Write(">>> ");
                     }
                     else if (key.Key == ConsoleKey.Backspace)
                     {
@@ -144,6 +143,15 @@ class Program
                             Console.SetCursorPosition(4 + cursorPosition, currentLine);
                         }
                     }
+                }
+                
+                // Send message after releasing lock
+                if (inputToSend != null)
+                {
+                    await writer.WriteLineAsync(inputToSend);
+                    if (shouldExit) break;
+                    inputToSend = null;
+                    Console.Write(">>> ");
                 }
             }
             
