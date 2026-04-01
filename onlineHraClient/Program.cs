@@ -38,7 +38,10 @@ class Program
                     {
                         var line = await reader.ReadLineAsync();
                         if (line == null) break;
+                        // Clear the current input line and re-display prompt after message
+                        Console.WriteLine();
                         Console.WriteLine(line);
+                        Console.Write(">>> ");
                     }
                 }
                 catch (Exception ex)
@@ -50,6 +53,7 @@ class Program
             // Send user input
             while (true)
             {
+                Console.Write(">>> ");
                 var input = Console.ReadLine();
                 if (input == null) break;
                 
