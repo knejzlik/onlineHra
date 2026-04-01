@@ -55,7 +55,9 @@ class Program
                         // Save cursor position and clear current line
                         int currentLine = Console.CursorTop;
                         Console.SetCursorPosition(0, currentLine);
-                        Console.Write(new string(' ', Console.WindowWidth));
+                        string currentLineContent = ">>> " + capturedInput;
+                        int spacesNeeded = Math.Max(0, Console.WindowWidth - currentLineContent.Length);
+                        Console.Write(currentLineContent + new string(' ', spacesNeeded));
                         Console.SetCursorPosition(0, currentLine);
                         
                         // Print the server message above
@@ -106,9 +108,9 @@ class Program
                             // Redraw the line
                             int currentLine = Console.CursorTop;
                             Console.SetCursorPosition(0, currentLine);
-                            Console.Write(new string(' ', Console.WindowWidth));
-                            Console.SetCursorPosition(0, currentLine);
-                            Console.Write(">>> " + currentInput);
+                            string currentLineContent = ">>> " + currentInput;
+                            int spacesNeeded = Math.Max(0, Console.WindowWidth - currentLineContent.Length);
+                            Console.Write(currentLineContent + new string(' ', spacesNeeded));
                             Console.SetCursorPosition(4 + cursorPosition, currentLine);
                         }
                     }
