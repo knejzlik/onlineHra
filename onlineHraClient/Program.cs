@@ -4,6 +4,10 @@ namespace onlineHraClient;
 
 class Program
 {
+    static string currentInput = "";
+    static int cursorPosition = 0;
+    static object lockObj = new object();
+
     static async Task Main(string[] args)
     {
         Console.WriteLine("=== MUD Client ===");
@@ -38,8 +42,23 @@ class Program
                     {
                         var line = await reader.ReadLineAsync();
                         if (line == null) break;
-                        // Print server message on its own line
-                        Console.WriteLine(line);
+                        
+                        lock (lockObj)
+                        {
+                            // Save cursor position and clear current line
+                            int currentLine = Console.CursorTop;
+                            Console.SetCursorPosition(0, currentLine);
+                            Console.Write(new string(' ', Console.WindowWidth));
+                            Console.SetCursorPosition(0, currentLine);
+                            
+                            // Print the server message above
+                            Console.WriteLine(line);
+                            
+                            // Re-display the prompt and current input
+                            Console.Write(">>> ");
+                            Console.Write(currentInput);
+                            Console.SetCursorPosition(4 + cursorPosition, currentLine + 1);
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -48,20 +67,78 @@ class Program
                 }
             });
             
-            // Send user input
+            // Send user input with custom character-by-character reading
+            Console.Write(">>> ");
             while (true)
             {
-                Console.Write(">>> ");
-                var input = Console.ReadLine();
-                if (input == null) break;
+                var key = Console.ReadKey(true);
                 
-                if (input.ToLower() == "quit" || input.ToLower() == "exit")
+                lock (lockObj)
                 {
-                    await writer.WriteLineAsync(input);
-                    break;
+                    if (key.Key == ConsoleKey.Enter)
+                    {
+                        Console.WriteLine();
+                        var input = currentInput;
+                        currentInput = "";
+                        cursorPosition = 0;
+                        
+                        if (input.ToLower() == "quit" || input.ToLower() == "exit")
+                        {
+                            await writer.WriteLineAsync(input);
+                            break;
+                        }
+                        
+                        await writer.WriteLineAsync(input);
+                        Console.Write(">>> ");
+                    }
+                    else if (key.Key == ConsoleKey.Backspace)
+                    {
+                        if (cursorPosition > 0)
+                        {
+                            currentInput = currentInput.Remove(cursorPosition - 1, 1);
+                            cursorPosition--;
+                            
+                            // Redraw the line
+                            int currentLine = Console.CursorTop;
+                            Console.SetCursorPosition(0, currentLine);
+                            Console.Write(new string(' ', Console.WindowWidth));
+                            Console.SetCursorPosition(0, currentLine);
+                            Console.Write(">>> " + currentInput);
+                            Console.SetCursorPosition(4 + cursorPosition, currentLine);
+                        }
+                    }
+                    else if (key.Key == ConsoleKey.LeftArrow)
+                    {
+                        if (cursorPosition > 0)
+                        {
+                            cursorPosition--;
+                            Console.SetCursorPosition(4 + cursorPosition, Console.CursorTop);
+                        }
+                    }
+                    else if (key.Key == ConsoleKey.RightArrow)
+                    {
+                        if (cursorPosition < currentInput.Length)
+                        {
+                            cursorPosition++;
+                            Console.SetCursorPosition(4 + cursorPosition, Console.CursorTop);
+                        }
+                    }
+                    else if (!char.IsControl(key.KeyChar))
+                    {
+                        currentInput = currentInput.Insert(cursorPosition, key.KeyChar.ToString());
+                        cursorPosition++;
+                        
+                        // Redraw from cursor position
+                        int currentLine = Console.CursorTop;
+                        Console.SetCursorPosition(4 + cursorPosition - 1, currentLine);
+                        Console.Write(key.KeyChar);
+                        if (cursorPosition < currentInput.Length)
+                        {
+                            Console.Write(currentInput.Substring(cursorPosition));
+                            Console.SetCursorPosition(4 + cursorPosition, currentLine);
+                        }
+                    }
                 }
-                
-                await writer.WriteLineAsync(input);
             }
             
             client.Close();
