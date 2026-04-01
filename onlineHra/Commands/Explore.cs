@@ -32,13 +32,11 @@ public class ExploreCommand : ICommand
             return "Error: Player not found.";
         }
 
-        // Ensure player's CurrentRoomId is synced with State
         if (string.IsNullOrEmpty(player.CurrentRoomId))
         {
             player.CurrentRoomId = player.State.CurrentRoomId;
         }
         
-        // Validate room exists, reset to start if not
         var room = ws.GetRoom(player.CurrentRoomId);
         if (room == null)
         {
@@ -57,7 +55,6 @@ public class ExploreCommand : ICommand
         sb.AppendLine(room.Description);
         sb.AppendLine();
 
-        // Exits
         sb.AppendLine("Exits:");
         if (room.Exits.Count == 0)
         {
@@ -73,7 +70,6 @@ public class ExploreCommand : ICommand
         }
         sb.AppendLine();
 
-        // Items
         sb.AppendLine("Items here:");
         if (room.Items.Count == 0)
         {
@@ -92,7 +88,6 @@ public class ExploreCommand : ICommand
         }
         sb.AppendLine();
 
-        // NPCs
         sb.AppendLine("Characters here:");
         if (room.Npcs.Count == 0)
         {
@@ -109,11 +104,6 @@ public class ExploreCommand : ICommand
                 }
             }
         }
-        sb.AppendLine();
-
-        // Other players
-        sb.AppendLine("Other players here:");
-        sb.AppendLine("  (no other players visible)");
 
         return sb.ToString();
     }

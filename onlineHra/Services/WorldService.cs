@@ -18,17 +18,15 @@ public class WorldService
 
     private void LoadWorld()
     {
-        // Get the base directory (where the executable is located)
         var baseDir = AppContext.BaseDirectory;
         
-        // Try multiple possible paths for the Data folder
         var possiblePaths = new[]
         {
-            _dataPath,  // Original path
-            Path.Combine(baseDir, _dataPath),  // Relative to executable
-            Path.Combine(Directory.GetCurrentDirectory(), _dataPath),  // Relative to current directory
-            Path.Combine(baseDir, "..", "..", "..", _dataPath),  // Relative to project root (for dev)
-            "Data",  // Fallback to just "Data"
+            _dataPath,
+            Path.Combine(baseDir, _dataPath),
+            Path.Combine(Directory.GetCurrentDirectory(), _dataPath),
+            Path.Combine(baseDir, "..", "..", "..", _dataPath),
+            "Data",
             Path.Combine(baseDir, "Data"),
             Path.Combine(Directory.GetCurrentDirectory(), "Data")
         };

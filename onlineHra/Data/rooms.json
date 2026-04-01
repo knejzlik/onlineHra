@@ -1,34 +1,74 @@
 [
   {
     "Id": "start",
-    "Name": "Startovní místnost",
-    "Description": "Jsi v malé kamenné místnosti. Stěny jsou vlhké a ve vzduchu je cítit mech. Na severu vidíš východ.",
+    "Name": "Starting Room",
+    "Description": "You are in a small stone room. The walls are damp and the air smells of moss. You see an exit to the north.",
     "Exits": { "north": "hallway" },
     "Items": ["torch"],
     "Npcs": []
   },
   {
     "Id": "hallway",
-    "Name": "Dlouhá chodba",
-    "Description": "Dlouhá temná chodba táhnoucí se od severu k jihu. Na východě jsou dveře pokryté prachem.",
-    "Exits": { "south": "start", "north": "treasure_room", "east": "library" },
+    "Name": "Long Hallway",
+    "Description": "A long dark corridor stretching from north to south. To the east are dust-covered doors. A narrow passage leads west.",
+    "Exits": { "south": "start", "north": "treasure_room", "east": "library", "west": "cavern" },
     "Items": ["key"],
     "Npcs": ["guard"]
   },
   {
     "Id": "library",
-    "Name": "Stará knihovna",
-    "Description": "Místnost plná starých knih. Prach pokrývá každý povrch. V rohu stojí starý mudrc.",
-    "Exits": { "west": "hallway" },
-    "Items": ["book"],
+    "Name": "Old Library",
+    "Description": "A room filled with ancient books. Dust covers every surface. An old sage stands in the corner studying scrolls.",
+    "Exits": { "west": "hallway", "north": "study" },
+    "Items": ["book", "scroll"],
     "Npcs": ["sage"]
   },
   {
-    "Id": "treasure_room",
-    "Name": "Pokladnice",
-    "Description": "Nádherná místnost s truhlou uprostřed. Zlaté mince se lesknou ve světle pochodní. Toto je cíl tvé cesty!",
-    "Exits": { "south": "hallway" },
-    "Items": ["golden_chalice"],
+    "Id": "study",
+    "Name": "Sage's Study",
+    "Description": "A small study filled with magical artifacts and bubbling potions. Strange symbols glow on the walls.",
+    "Exits": { "south": "library" },
+    "Items": ["potion", "crystal"],
     "Npcs": []
+  },
+  {
+    "Id": "cavern",
+    "Name": "Dark Cavern",
+    "Description": "A vast underground cavern with stalactites hanging from the ceiling. Water drips somewhere in the darkness. Paths lead east and down.",
+    "Exits": { "east": "hallway", "down": "underground_lake" },
+    "Items": ["lantern"],
+    "Npcs": ["miner"]
+  },
+  {
+    "Id": "underground_lake",
+    "Name": "Underground Lake",
+    "Description": "A serene underground lake reflects your torchlight. A small boat is tied to a wooden dock. The only way out is up.",
+    "Exits": { "up": "cavern" },
+    "Items": ["fishing_rod"],
+    "Npcs": ["fisherman"]
+  },
+  {
+    "Id": "treasure_room",
+    "Name": "Treasure Chamber",
+    "Description": "A magnificent chamber with a chest in the center. Gold coins sparkle in the torchlight. This is the goal of your journey!",
+    "Exits": { "south": "hallway", "east": "secret_passage" },
+    "Items": ["golden_chalice", "jewel"],
+    "Npcs": []
+  },
+  {
+    "Id": "secret_passage",
+    "Name": "Secret Passage",
+    "Description": "A hidden corridor behind the treasure chamber. Ancient torches line the walls, still burning after centuries.",
+    "Exits": { "west": "treasure_room", "north": "ancient_altar" },
+    "Items": ["ancient_coin"],
+    "Npcs": ["ghost"]
+  },
+  {
+    "Id": "ancient_altar",
+    "Name": "Ancient Altar",
+    "Description": "A mysterious stone altar covered in forgotten runes. A powerful energy emanates from this sacred place.",
+    "Exits": { "south": "secret_passage" },
+    "Items": ["holy_relic"],
+    "Npcs": ["priest"]
   }
 ]

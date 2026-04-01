@@ -35,7 +35,6 @@ public class TakeCommand : ICommand
             return "Usage: take <item name>";
         }
 
-        // Ensure player's CurrentRoomId is synced with State
         if (string.IsNullOrEmpty(player.CurrentRoomId))
         {
             player.CurrentRoomId = player.State.CurrentRoomId;
@@ -44,7 +43,6 @@ public class TakeCommand : ICommand
         var currentRoom = ws.GetRoom(player.CurrentRoomId);
         if (currentRoom == null)
         {
-            // Reset to start room
             player.CurrentRoomId = "start";
             player.State.CurrentRoomId = "start";
             currentRoom = ws.GetRoom("start");
@@ -57,7 +55,6 @@ public class TakeCommand : ICommand
 
         var itemName = args.ToLower().Trim();
         
-        // Find item in room
         string? foundItemId = null;
         Item? foundItem = null;
         
@@ -77,14 +74,12 @@ public class TakeCommand : ICommand
             return $"There is no '{args}' here to take.";
         }
 
-        // Check inventory capacity
         var currentWeight = player.State.Inventory.Sum(id => ws.GetItem(id)?.Weight ?? 0);
         if (currentWeight + foundItem.Weight > player.State.MaxInventoryCapacity)
         {
             return $"Your inventory is too full to carry the {foundItem.Name}.";
         }
 
-        // Remove from room and add to inventory
         currentRoom.Items.Remove(foundItemId);
         player.State.Inventory.Add(foundItemId);
         ps.SavePlayer(player.State);

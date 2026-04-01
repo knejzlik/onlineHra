@@ -30,7 +30,6 @@ public class TalkCommand : ICommand
             return "Usage: talk <character name> [topic]";
         }
 
-        // Ensure player's CurrentRoomId is synced with State
         if (string.IsNullOrEmpty(player.CurrentRoomId))
         {
             player.CurrentRoomId = player.State.CurrentRoomId;
@@ -39,7 +38,6 @@ public class TalkCommand : ICommand
         var currentRoom = ws.GetRoom(player.CurrentRoomId);
         if (currentRoom == null)
         {
-            // Reset to start room
             player.CurrentRoomId = "start";
             player.State.CurrentRoomId = "start";
             currentRoom = ws.GetRoom("start");
@@ -54,7 +52,6 @@ public class TalkCommand : ICommand
         var targetName = parts[0].ToLower().Trim();
         var topic = parts.Length > 1 ? parts[1].ToLower().Trim() : "default";
         
-        // Find NPC by name
         Npc? targetNpc = null;
         foreach (var npcId in currentRoom.Npcs)
         {
@@ -71,7 +68,6 @@ public class TalkCommand : ICommand
             return $"There is no '{parts[0]}' here to talk to.";
         }
 
-        // Try to find dialog response by topic, fallback to default
         var response = targetNpc.Dialogs.FirstOrDefault(d => d.Trigger.ToLower() == topic)?.Response 
             ?? targetNpc.Dialogs.FirstOrDefault(d => d.Trigger == "default")?.Response 
             ?? $"{targetNpc.Name} doesn't have anything to say about that.";

@@ -35,7 +35,6 @@ public class GoCommand : ICommand
             return "Usage: go <direction> (north, south, east, west, up, down)";
         }
 
-        // Ensure player's CurrentRoomId is synced with State
         if (string.IsNullOrEmpty(player.CurrentRoomId))
         {
             player.CurrentRoomId = player.State.CurrentRoomId;
@@ -44,7 +43,6 @@ public class GoCommand : ICommand
         var currentRoom = ws.GetRoom(player.CurrentRoomId);
         if (currentRoom == null)
         {
-            // Reset to start room
             player.CurrentRoomId = "start";
             player.State.CurrentRoomId = "start";
             currentRoom = ws.GetRoom("start");
@@ -56,22 +54,6 @@ public class GoCommand : ICommand
         }
 
         var direction = args.ToLower().Trim();
-        
-        // Map Czech directions to English
-        direction = direction switch
-        {
-            "sever" => "north",
-            "jih" => "south",
-            "vychod" => "east",
-            "zapad" => "west",
-            "nahoru" => "up",
-            "dolů" => "down",
-            "s" => "north",
-            "j" => "south",
-            "v" => "east",
-            "z" => "west",
-            _ => direction
-        };
 
         if (!currentRoom.Exits.TryGetValue(direction, out var targetRoomId))
         {
@@ -84,7 +66,6 @@ public class GoCommand : ICommand
             return "Error: Target room not found.";
         }
 
-        // Update player position
         player.CurrentRoomId = targetRoomId;
         player.State.CurrentRoomId = targetRoomId;
         ps.SavePlayer(player.State);

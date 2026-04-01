@@ -25,10 +25,9 @@ public class SayCommand : ICommand
     {
         if (player == null || string.IsNullOrEmpty(args))
         {
-            return "Usage: rekni <message> - sends a message to all players in the same room";
+            return "Usage: say <message> - sends a message to all players in the same room";
         }
 
-        // Ensure player's CurrentRoomId is synced with State
         if (string.IsNullOrEmpty(player.CurrentRoomId))
         {
             player.CurrentRoomId = player.State.CurrentRoomId;
@@ -38,7 +37,6 @@ public class SayCommand : ICommand
         var currentRoom = ws.GetRoom(player.CurrentRoomId);
         if (currentRoom == null)
         {
-            // Reset to start room
             player.CurrentRoomId = "start";
             player.State.CurrentRoomId = "start";
             currentRoom = ws.GetRoom("start");
