@@ -2,6 +2,7 @@ using System.Net.Sockets;
 using System.Text;
 using onlineHra.Models;
 using onlineHra.Services;
+using onlineHra.Networking;
 
 namespace onlineHra.Commands;
 
@@ -10,15 +11,17 @@ public class GoCommand : ICommand
     private readonly WorldService _worldService;
     private readonly PlayerService _playerService;
     private readonly LoggingService _logger;
+    private readonly Server? _server;
 
-    public GoCommand(WorldService worldService, PlayerService playerService, LoggingService logger)
+    public GoCommand(WorldService worldService, PlayerService playerService, LoggingService logger, Server? server = null)
     {
         _worldService = worldService;
         _playerService = playerService;
         _logger = logger;
+        _server = server;
     }
 
-    public GoCommand() : this(new WorldService(), new PlayerService(), new LoggingService()) { }
+    public GoCommand() : this(new WorldService(), new PlayerService(), new LoggingService(), null) { }
 
     public async Task<string> Execute(TcpClient client)
     {
@@ -82,6 +85,23 @@ public class GoCommand : ICommand
         foreach (var exit in targetRoom.Exits)
         {
             sb.AppendLine($"  {GetDirectionName(exit.Key)} -> {exit.Value}");
+        }
+
+        if (_server != null)
+        {
+            var playersInRoom = _server.GetPlayersInRoom(targetRoomId);
+            if (playersInRoom.Count > 0)
+            {
+                sb.AppendLine();
+                sb.AppendLine("Players here:");
+                foreach (var p in playersInRoom)
+                {
+                    if (p != player)
+                    {
+                        sb.AppendLine($"  - {p.State.Username}");
+                    }
+                }
+            }
         }
 
         return sb.ToString();

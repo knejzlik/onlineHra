@@ -1,18 +1,23 @@
 ```
-# Build artifacts
-bin/
-obj/
-*.dll
+# Compiled and build artifacts
+*.o
+*.obj
 *.exe
-*.pdb
-*.config
+*.dll
+*.so
+*.a
+*.out
 
 # Dependencies
 packages/
-node_modules/
+bin/
+obj/
+*.userprefs
 
-# Logs
+# Logs and temp files
 *.log
+*.tmp
+*.swp
 
 # Environment
 .env
@@ -22,13 +27,14 @@ node_modules/
 # Editors
 .vscode/
 .idea/
-*.userprefs
-*.user
-*.suo
-*.userosscache
-*.sln.docstates
 
 # OS generated files
 .DS_Store
 Thumbs.db
+
+# Build outputs
+Debug/
+Release/
+x64/
+x86/
 ```
