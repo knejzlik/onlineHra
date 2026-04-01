@@ -1,26 +1,74 @@
 [
   {
     "Id": "torch",
-    "Name": "Pochodeň",
-    "Description": "Stará dřevěná pochodeň, která ještě hoří.",
+    "Name": "Torch",
+    "Description": "An old wooden torch that is still burning.",
     "Weight": 2
   },
   {
     "Id": "key",
-    "Name": "Starý klíč",
-    "Description": "Rezavý železný klíč. Možná otevře nějaké dveře.",
+    "Name": "Old Key",
+    "Description": "A rusty iron key. It might open some doors.",
     "Weight": 1
   },
   {
     "Id": "book",
-    "Name": "Zaprášená kniha",
-    "Description": "Kniha starých legend. Obsahuje informace o ztraceném pokladu.",
+    "Name": "Dusty Book",
+    "Description": "A book of ancient legends. Contains information about lost treasures.",
     "Weight": 3
   },
   {
     "Id": "golden_chalice",
-    "Name": "Zlatý pohár",
-    "Description": "Nádherný zlatý pohár zdobený drahokamy. Toto je legendární artefakt!",
+    "Name": "Golden Chalice",
+    "Description": "A beautiful golden chalice adorned with precious gems. This is the legendary artifact!",
     "Weight": 5
+  },
+  {
+    "Id": "scroll",
+    "Name": "Ancient Scroll",
+    "Description": "A fragile scroll covered in mysterious runes. It seems to contain a map.",
+    "Weight": 1
+  },
+  {
+    "Id": "potion",
+    "Name": "Mysterious Potion",
+    "Description": "A glowing blue potion bubbling with magical energy. Effects unknown.",
+    "Weight": 1
+  },
+  {
+    "Id": "crystal",
+    "Name": "Magic Crystal",
+    "Description": "A pulsating crystal that hums with arcane power.",
+    "Weight": 2
+  },
+  {
+    "Id": "lantern",
+    "Name": "Oil Lantern",
+    "Description": "A sturdy lantern filled with oil. Provides better light than a torch.",
+    "Weight": 3
+  },
+  {
+    "Id": "fishing_rod",
+    "Name": "Fishing Rod",
+    "Description": "A well-worn fishing rod, perfect for catching underground fish.",
+    "Weight": 2
+  },
+  {
+    "Id": "jewel",
+    "Name": "Precious Jewel",
+    "Description": "A sparkling ruby that seems to glow from within.",
+    "Weight": 1
+  },
+  {
+    "Id": "ancient_coin",
+    "Name": "Ancient Coin",
+    "Description": "A gold coin from a forgotten civilization. Bears the image of an ancient king.",
+    "Weight": 1
+  },
+  {
+    "Id": "holy_relic",
+    "Name": "Holy Relic",
+    "Description": "A sacred artifact blessed by ancient priests. Radiates divine energy.",
+    "Weight": 4
   }
 ]

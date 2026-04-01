@@ -1,22 +1,68 @@
 [
   {
     "Id": "guard",
-    "Name": "Strážce",
-    "Description": "Starý strážce v rezavé zbroji. Vypadá, že tu stojí už stovky let.",
+    "Name": "Guard",
+    "Description": "An old guard in rusty armor. He looks like he has been standing here for hundreds of years.",
     "Dialogs": [
-      { "Trigger": "default", "Response": "Stojím zde již věky. Hledáš poklad? Projeď chodbou na sever, ale pozor na pasti." },
-      { "Trigger": "poklad", "Response": "Poklad je ukryt v místnosti na severu. Ale potřebuješ klíč, který leží v chodbě." },
-      { "Trigger": "klíč", "Response": "Klíč? Viděl jsem ho ležet v chodbě. Někdo ho tam asi upustil." }
+      { "Trigger": "default", "Response": "I have stood here for ages. Are you looking for the treasure? Go through the hallway to the north, but beware of traps." },
+      { "Trigger": "treasure", "Response": "The treasure is hidden in the room to the north. But you need the key that lies in the hallway." },
+      { "Trigger": "key", "Response": "The key? I saw it lying in the hallway. Someone must have dropped it there." },
+      { "Trigger": "traps", "Response": "The ancient ones left many traps. Watch your step near pressure plates and loose stones." }
     ]
   },
   {
     "Id": "sage",
-    "Name": "Mudrc",
-    "Description": "Starý muž s dlouhým bílým vousem. Jeho oči září moudrostí.",
+    "Name": "Sage",
+    "Description": "An old man with a long white beard. His eyes shine with wisdom.",
     "Dialogs": [
-      { "Trigger": "default", "Response": "Vítej, cestovateli. Hledáš zlatý pohár? Přeji ti hodně štěstí na tvé cestě." },
-      { "Trigger": "pohár", "Response": "Zlatý pohár má moc splnit jedno přání. Ale mnoho těch, kteří po něm pátrali, se již nevrátilo." },
-      { "Trigger": "cesta", "Response": "Tvá cesta začíná v malé kamenné místnosti. Pokračuj na sever a najdeš, co hledáš." }
+      { "Trigger": "default", "Response": "Welcome, traveler. Are you seeking the golden chalice? I wish you luck on your journey." },
+      { "Trigger": "chalice", "Response": "The golden chalice has the power to grant one wish. But many who sought it never returned." },
+      { "Trigger": "journey", "Response": "Your journey begins in a small stone room. Continue north and you will find what you seek." },
+      { "Trigger": "magic", "Response": "Magic flows through these ancient halls. The crystals in my study can enhance your abilities." }
+    ]
+  },
+  {
+    "Id": "miner",
+    "Name": "Miner",
+    "Description": "A weathered miner with a pickaxe, covered in dust from years of digging.",
+    "Dialogs": [
+      { "Trigger": "default", "Response": "Another adventurer? Be careful down here. The caverns are deep and full of dangers." },
+      { "Trigger": "cavern", "Response": "These caverns stretch for miles. I've found many treasures but also many terrors." },
+      { "Trigger": "lake", "Response": "The underground lake below is peaceful. A fisherman lives there. He knows secrets about these depths." },
+      { "Trigger": "work", "Response": "I've been mining these caves for decades. The gems here are unlike any found on the surface." }
+    ]
+  },
+  {
+    "Id": "fisherman",
+    "Name": "Fisherman",
+    "Description": "A quiet fisherman sitting by the underground lake, patiently waiting for a catch.",
+    "Dialogs": [
+      { "Trigger": "default", "Response": "Shhh... the fish are biting today. Care to try your luck?" },
+      { "Trigger": "fish", "Response": "The blind fish in this lake have never seen sunlight. They taste surprisingly good." },
+      { "Trigger": "boat", "Response": "This boat has carried many souls across these dark waters. Some never came back." },
+      { "Trigger": "secret", "Response": "Between you and me, there's a secret passage behind the treasure chamber. Few know about it." }
+    ]
+  },
+  {
+    "Id": "ghost",
+    "Name": "Ghost",
+    "Description": "A translucent figure floating in the passage, remnants of an ancient warrior.",
+    "Dialogs": [
+      { "Trigger": "default", "Response": "Who disturbs my eternal rest? Speak quickly, mortal." },
+      { "Trigger": "passage", "Response": "This secret passage was once known only to the high priests. Now it's my domain." },
+      { "Trigger": "treasure", "Response": "Gold means nothing to the dead. But for you living ones, it seems to mean everything." },
+      { "Trigger": "help", "Response": "I cannot help you directly, but I can warn you: the altar ahead holds great power and great danger." }
+    ]
+  },
+  {
+    "Id": "priest",
+    "Name": "Priest",
+    "Description": "A hooded figure chanting prayers at the ancient altar, surrounded by mystical energy.",
+    "Dialogs": [
+      { "Trigger": "default", "Response": "Blessings upon you, child. You have come far to reach this sacred place." },
+      { "Trigger": "altar", "Response": "This altar predates all recorded history. Its runes hold the power of the ancients." },
+      { "Trigger": "relic", "Response": "The holy relic upon this altar can heal any wound or curse any enemy. Choose wisely how you use it." },
+      { "Trigger": "blessing", "Response": "May the ancient ones guide your path. Take this blessing as you continue your quest." }
     ]
   }
 ]

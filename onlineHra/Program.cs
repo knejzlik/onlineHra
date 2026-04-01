@@ -6,7 +6,6 @@ class Program
 {
     static void Main(string[] args)
     {
-        // Set working directory to the application's base directory
         var baseDir = AppContext.BaseDirectory;
         Directory.SetCurrentDirectory(baseDir);
         

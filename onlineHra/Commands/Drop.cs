@@ -35,7 +35,6 @@ public class DropCommand : ICommand
             return "Usage: drop <item name>";
         }
 
-        // Ensure player's CurrentRoomId is synced with State
         if (string.IsNullOrEmpty(player.CurrentRoomId))
         {
             player.CurrentRoomId = player.State.CurrentRoomId;
@@ -44,7 +43,6 @@ public class DropCommand : ICommand
         var currentRoom = ws.GetRoom(player.CurrentRoomId);
         if (currentRoom == null)
         {
-            // Reset to start room
             player.CurrentRoomId = "start";
             player.State.CurrentRoomId = "start";
             currentRoom = ws.GetRoom("start");
@@ -57,7 +55,6 @@ public class DropCommand : ICommand
 
         var itemName = args.ToLower().Trim();
         
-        // Find item in inventory
         string? foundItemId = null;
         Item? foundItem = null;
         
@@ -77,7 +74,6 @@ public class DropCommand : ICommand
             return $"You don't have '{args}' in your inventory.";
         }
 
-        // Remove from inventory and add to room
         player.State.Inventory.Remove(foundItemId);
         currentRoom.Items.Add(foundItemId);
         ps.SavePlayer(player.State);
