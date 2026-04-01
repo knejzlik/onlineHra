@@ -38,10 +38,8 @@ class Program
                     {
                         var line = await reader.ReadLineAsync();
                         if (line == null) break;
-                        // Clear the current input line and re-display prompt after message
-                        Console.WriteLine();
+                        // Print server message on its own line
                         Console.WriteLine(line);
-                        Console.Write(">>> ");
                     }
                 }
                 catch (Exception ex)
