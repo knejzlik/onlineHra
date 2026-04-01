@@ -45,12 +45,15 @@ public class Server
         
         // Initialize commands with services
         commands.Add("help", new HelpCommand());
-        commands.Add("explore", new ExploreCommand(_worldService, _logger));
-        commands.Add("go", new GoCommand(_worldService, _playerService, _logger));
+        commands.Add("explore", new ExploreCommand(_worldService, _logger, this));
+        commands.Add("go", new GoCommand(_worldService, _playerService, _logger, this));
         commands.Add("inventory", new InventoryCommand(_worldService, _playerService));
         commands.Add("take", new TakeCommand(_worldService, _playerService, _logger));
         commands.Add("drop", new DropCommand(_worldService, _playerService, _logger));
-        commands.Add("talk", new TalkCommand(_worldService));
+        commands.Add("talk", new TalkCommand(_worldService, this));
+        commands.Add("say", new SayCommand(_logger, this));
+        commands.Add("whisper", new WhisperCommand(this));
+        commands.Add("broadcast", new BroadcastCommand(this));
         
         // Use discards (_) to fire-and-forget these loops safely
         _ = AcceptLoopAsync();
@@ -182,6 +185,9 @@ public class Server
             "take" => await ((TakeCommand)cmd).Execute(player.Client, player, _worldService, _playerService, args),
             "drop" => await ((DropCommand)cmd).Execute(player.Client, player, _worldService, _playerService, args),
             "talk" => await ((TalkCommand)cmd).Execute(player.Client, player, _worldService, args),
+            "say" => await ((SayCommand)cmd).Execute(player.Client, player, _worldService, args),
+            "whisper" => await ((WhisperCommand)cmd).Execute(player.Client, player, _worldService, args),
+            "broadcast" => await ((BroadcastCommand)cmd).Execute(player.Client, player, _worldService, args),
             _ => await cmd.Execute(player.Client)
         };
     }
@@ -192,6 +198,22 @@ public class Server
         lock (_connectionsLock)
         {
             connections.Remove(client);
+        }
+    }
+
+    public List<Player> GetPlayersInRoom(string roomId)
+    {
+        lock (_connectionsLock)
+        {
+            return connections.Where(p => p.CurrentRoomId == roomId).ToList();
+        }
+    }
+
+    public List<Player> GetAllPlayers()
+    {
+        lock (_connectionsLock)
+        {
+            return connections.ToList();
         }
     }
 

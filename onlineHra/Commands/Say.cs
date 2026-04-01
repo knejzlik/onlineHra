@@ -2,19 +2,22 @@ using System.Net.Sockets;
 using System.Text;
 using onlineHra.Models;
 using onlineHra.Services;
+using onlineHra.Networking;
 
 namespace onlineHra.Commands;
 
 public class SayCommand : ICommand
 {
     private readonly LoggingService _logger;
+    private readonly Server? _server;
 
-    public SayCommand(LoggingService logger)
+    public SayCommand(LoggingService logger, Server? server = null)
     {
         _logger = logger;
+        _server = server;
     }
 
-    public SayCommand() : this(new LoggingService()) { }
+    public SayCommand() : this(new LoggingService(), null) { }
 
     public async Task<string> Execute(TcpClient client)
     {
@@ -47,6 +50,22 @@ public class SayCommand : ICommand
             }
         }
 
-        return $"You say: \"{args}\"";
+        var result = new StringBuilder();
+        result.AppendLine($"You say: \"{args}\"");
+        
+        if (_server != null)
+        {
+            var playersInRoom = _server.GetPlayersInRoom(player.CurrentRoomId);
+            foreach (var p in playersInRoom)
+            {
+                if (p != player)
+                {
+                    await p.SendMessageAsync($"\n[{player.State.Username}] says: \"{args}\"");
+                    result.AppendLine($"Sent to: {p.State.Username}");
+                }
+            }
+        }
+
+        return result.ToString();
     }
 }

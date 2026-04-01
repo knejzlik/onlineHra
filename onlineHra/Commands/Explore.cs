@@ -2,6 +2,7 @@ using System.Net.Sockets;
 using System.Text;
 using onlineHra.Models;
 using onlineHra.Services;
+using onlineHra.Networking;
 
 namespace onlineHra.Commands;
 
@@ -9,14 +10,16 @@ public class ExploreCommand : ICommand
 {
     private readonly WorldService _worldService;
     private readonly LoggingService _logger;
+    private readonly Server? _server;
 
-    public ExploreCommand(WorldService worldService, LoggingService logger)
+    public ExploreCommand(WorldService worldService, LoggingService logger, Server? server = null)
     {
         _worldService = worldService;
         _logger = logger;
+        _server = server;
     }
 
-    public ExploreCommand() : this(new WorldService(), new LoggingService()) { }
+    public ExploreCommand() : this(new WorldService(), new LoggingService(), null) { }
 
     public async Task<string> Execute(TcpClient client)
     {
@@ -101,6 +104,27 @@ public class ExploreCommand : ICommand
                 if (npc != null)
                 {
                     sb.AppendLine($"  - {npc.Name} ({npc.Description})");
+                }
+            }
+        }
+        sb.AppendLine();
+
+        if (_server != null)
+        {
+            var playersInRoom = _server.GetPlayersInRoom(player.CurrentRoomId);
+            sb.AppendLine("Players here:");
+            if (playersInRoom.Count == 0)
+            {
+                sb.AppendLine("  (none)");
+            }
+            else
+            {
+                foreach (var p in playersInRoom)
+                {
+                    if (p != player)
+                    {
+                        sb.AppendLine($"  - {p.State.Username}");
+                    }
                 }
             }
         }
