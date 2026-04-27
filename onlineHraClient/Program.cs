@@ -1,4 +1,5 @@
 using System.Net.Sockets;
+using System.Text;
 
 namespace onlineHraClient;
 
@@ -6,13 +7,14 @@ class Program
 {
     static string currentInput = "";
     static int cursorPosition = 0;
+    static bool isPasswordMode = false;
     static readonly object lockObj = new object();
 
     static async Task Main(string[] args)
     {
         Console.WriteLine("=== MUD Client ===");
         Console.Write("Server address (default: localhost): ");
-        var serverAddressInput = Console.ReadLine();
+        var serverAddressInput = ReadLineHidden();
         var serverAddress = string.IsNullOrWhiteSpace(serverAddressInput) ? "localhost" : serverAddressInput.Trim();
         
         Console.Write("Server port (default: 65525): ");
@@ -44,23 +46,33 @@ class Program
                         var line = await reader.ReadLineAsync();
                         if (line == null) break;
                         
-                        // Capture input state under lock
                         string capturedInput;
                         int capturedCursor;
+                        bool capturedPasswordMode;
                         lock (lockObj)
                         {
                             capturedInput = currentInput;
                             capturedCursor = cursorPosition;
+                            capturedPasswordMode = isPasswordMode;
                         }
                         
-                        // Simply write the message and redisplay prompt
-                        // Avoid complex cursor manipulation that can fail
+                        // Simply write the message
                         Console.WriteLine();
                         Console.WriteLine(line);
-                        Console.Write(">>> ");
-                        Console.Write(capturedInput);
                         
-                        // Try to set cursor position, but don't crash if it fails
+                        // Redisplay prompt and input
+                        if (!capturedPasswordMode)
+                        {
+                            Console.Write(">>> ");
+                            Console.Write(capturedInput);
+                        }
+                        else
+                        {
+                            Console.Write(">>> ");
+                            Console.Write(new string('*', capturedInput.Length));
+                        }
+                        
+                        // Try to set cursor position
                         try
                         {
                             int targetLeft = 4 + capturedCursor;
@@ -72,7 +84,7 @@ class Program
                         }
                         catch
                         {
-                            // If we can't set cursor position, just leave it at the end
+                            // Ignore cursor errors
                         }
                     }
                 }
@@ -82,7 +94,7 @@ class Program
                 }
             });
             
-            // Send user input with custom character-by-character reading
+            // Send user input
             Console.Write(">>> ");
             string? inputToSend = null;
             bool shouldExit = false;
@@ -100,6 +112,10 @@ class Program
                         currentInput = "";
                         cursorPosition = 0;
                         
+                        // Check if this might be a password prompt response
+                        // Reset password mode after sending
+                        isPasswordMode = false;
+                        
                         if (inputToSend.ToLower() == "quit" || inputToSend.ToLower() == "exit")
                         {
                             shouldExit = true;
@@ -115,7 +131,8 @@ class Program
                             // Redraw the line
                             int currentLine = Console.CursorTop;
                             Console.SetCursorPosition(0, currentLine);
-                            string currentLineContent = ">>> " + currentInput;
+                            string displayInput = isPasswordMode ? new string('*', currentInput.Length) : currentInput;
+                            string currentLineContent = ">>> " + displayInput;
                             int spacesNeeded = Math.Max(0, Console.WindowWidth - currentLineContent.Length);
                             Console.Write(currentLineContent + new string(' ', spacesNeeded));
                             Console.SetCursorPosition(4 + cursorPosition, currentLine);
@@ -145,10 +162,18 @@ class Program
                         // Redraw from cursor position
                         int currentLine = Console.CursorTop;
                         Console.SetCursorPosition(4 + cursorPosition - 1, currentLine);
-                        Console.Write(key.KeyChar);
+                        char displayChar = isPasswordMode ? '*' : key.KeyChar;
+                        Console.Write(displayChar);
                         if (cursorPosition < currentInput.Length)
                         {
-                            Console.Write(currentInput.Substring(cursorPosition));
+                            if (isPasswordMode)
+                            {
+                                Console.Write(new string('*', currentInput.Length - cursorPosition));
+                            }
+                            else
+                            {
+                                Console.Write(currentInput.Substring(cursorPosition));
+                            }
                             Console.SetCursorPosition(4 + cursorPosition, currentLine);
                         }
                     }
@@ -171,5 +196,34 @@ class Program
         {
             Console.WriteLine($"Error: {ex.Message}");
         }
+    }
+    
+    // Helper method to read a line without displaying characters (for passwords)
+    static string ReadLineHidden()
+    {
+        string result = "";
+        while (true)
+        {
+            var key = Console.ReadKey(true);
+            if (key.Key == ConsoleKey.Enter)
+            {
+                Console.WriteLine();
+                break;
+            }
+            else if (key.Key == ConsoleKey.Backspace)
+            {
+                if (result.Length > 0)
+                {
+                    result = result.Substring(0, result.Length - 1);
+                    Console.Write("\b \b");
+                }
+            }
+            else if (!char.IsControl(key.KeyChar))
+            {
+                result += key.KeyChar;
+                Console.Write("*");
+            }
+        }
+        return result;
     }
 }

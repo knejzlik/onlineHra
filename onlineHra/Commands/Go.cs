@@ -98,13 +98,51 @@ public class GoCommand : ICommand
         {
             sb.AppendLine($"  {GetDirectionName(exit.Key)} -> {exit.Value}");
         }
+        sb.AppendLine();
+
+        // Show items in the room
+        sb.AppendLine("Items here:");
+        if (targetRoom.Items.Count == 0)
+        {
+            sb.AppendLine("  (none)");
+        }
+        else
+        {
+            foreach (var itemId in targetRoom.Items)
+            {
+                var item = ws.GetItem(itemId);
+                if (item != null)
+                {
+                    sb.AppendLine($"  - {item.Name} ({item.Description})");
+                }
+            }
+        }
+        sb.AppendLine();
+
+        // Show NPCs in the room
+        sb.AppendLine("Characters here:");
+        if (targetRoom.Npcs.Count == 0)
+        {
+            sb.AppendLine("  (none)");
+        }
+        else
+        {
+            foreach (var npcId in targetRoom.Npcs)
+            {
+                var npc = ws.GetNpc(npcId);
+                if (npc != null)
+                {
+                    sb.AppendLine($"  - {npc.Name} ({npc.Description})");
+                }
+            }
+        }
+        sb.AppendLine();
 
         if (_server != null)
         {
             var playersInRoom = _server.GetPlayersInRoom(targetRoomId);
             if (playersInRoom.Count > 0)
             {
-                sb.AppendLine();
                 sb.AppendLine("Players here:");
                 foreach (var p in playersInRoom)
                 {
