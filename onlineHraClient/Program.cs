@@ -12,14 +12,14 @@ class Program
 
     static async Task Main(string[] args)
     {
-        Console.WriteLine("=== MUD Client ===");
-        Console.Write("Server address (default: localhost): ");
-        var serverAddressInput = ReadLineHidden();
+        Console.WriteLine("=== MUD Klient ===");
+        Console.Write("Adresa serveru (vychozi: localhost): ");
+        var serverAddressInput = Console.ReadLine();
         var serverAddress = string.IsNullOrWhiteSpace(serverAddressInput) ? "localhost" : serverAddressInput.Trim();
-        
-        Console.Write("Server port (default: 65525): ");
+
+        Console.Write("Port serveru (vychozi: 65525): ");
         var portInput = Console.ReadLine()?.Trim() ?? "65525";
-        
+
         if (!int.TryParse(portInput, out int port))
         {
             port = 65525;
@@ -28,15 +28,14 @@ class Program
         try
         {
             using var client = new TcpClient();
-            Console.WriteLine($"Connecting to {serverAddress}:{port}...");
-            
+            Console.WriteLine($"Pripojovani k {serverAddress}:{port}...");
+
             await client.ConnectAsync(serverAddress, port);
-            Console.WriteLine("Connected!");
-            
+            Console.WriteLine("Pripojeno!");
+
             using var reader = new StreamReader(client.GetStream());
             using var writer = new StreamWriter(client.GetStream()) { AutoFlush = true };
-            
-            // Read and display server messages in background
+
             var readTask = Task.Run(async () =>
             {
                 try
@@ -45,22 +44,26 @@ class Program
                     {
                         var line = await reader.ReadLineAsync();
                         if (line == null) break;
-                        
+
                         string capturedInput;
                         int capturedCursor;
                         bool capturedPasswordMode;
+
                         lock (lockObj)
                         {
+                            if (line.ToLower().Contains("heslo:") || line.ToLower().Contains("password:"))
+                            {
+                                isPasswordMode = true;
+                            }
+
                             capturedInput = currentInput;
                             capturedCursor = cursorPosition;
                             capturedPasswordMode = isPasswordMode;
                         }
-                        
-                        // Simply write the message
+
                         Console.WriteLine();
                         Console.WriteLine(line);
-                        
-                        // Redisplay prompt and input
+
                         if (!capturedPasswordMode)
                         {
                             Console.Write(">>> ");
@@ -71,8 +74,7 @@ class Program
                             Console.Write(">>> ");
                             Console.Write(new string('*', capturedInput.Length));
                         }
-                        
-                        // Try to set cursor position
+
                         try
                         {
                             int targetLeft = 4 + capturedCursor;
@@ -84,25 +86,23 @@ class Program
                         }
                         catch
                         {
-                            // Ignore cursor errors
                         }
                     }
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"\nConnection lost: {ex.Message}");
+                    Console.WriteLine($"\nSpojeni ztraceno: {ex.Message}");
                 }
             });
-            
-            // Send user input
+
             Console.Write(">>> ");
             string? inputToSend = null;
             bool shouldExit = false;
-            
+
             while (true)
             {
                 var key = Console.ReadKey(true);
-                
+
                 lock (lockObj)
                 {
                     if (key.Key == ConsoleKey.Enter)
@@ -111,11 +111,9 @@ class Program
                         inputToSend = currentInput;
                         currentInput = "";
                         cursorPosition = 0;
-                        
-                        // Check if this might be a password prompt response
-                        // Reset password mode after sending
+
                         isPasswordMode = false;
-                        
+
                         if (inputToSend.ToLower() == "quit" || inputToSend.ToLower() == "exit")
                         {
                             shouldExit = true;
@@ -127,8 +125,7 @@ class Program
                         {
                             currentInput = currentInput.Remove(cursorPosition - 1, 1);
                             cursorPosition--;
-                            
-                            // Redraw the line
+
                             int currentLine = Console.CursorTop;
                             Console.SetCursorPosition(0, currentLine);
                             string displayInput = isPasswordMode ? new string('*', currentInput.Length) : currentInput;
@@ -158,8 +155,7 @@ class Program
                     {
                         currentInput = currentInput.Insert(cursorPosition, key.KeyChar.ToString());
                         cursorPosition++;
-                        
-                        // Redraw from cursor position
+
                         int currentLine = Console.CursorTop;
                         Console.SetCursorPosition(4 + cursorPosition - 1, currentLine);
                         char displayChar = isPasswordMode ? '*' : key.KeyChar;
@@ -178,8 +174,7 @@ class Program
                         }
                     }
                 }
-                
-                // Send message after releasing lock
+
                 if (inputToSend != null)
                 {
                     await writer.WriteLineAsync(inputToSend);
@@ -188,42 +183,13 @@ class Program
                     Console.Write(">>> ");
                 }
             }
-            
+
             client.Close();
-            Console.WriteLine("Disconnected from server.");
+            Console.WriteLine("Odpojeno od serveru.");
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Error: {ex.Message}");
+            Console.WriteLine($"Chyba: {ex.Message}");
         }
-    }
-    
-    // Helper method to read a line without displaying characters (for passwords)
-    static string ReadLineHidden()
-    {
-        string result = "";
-        while (true)
-        {
-            var key = Console.ReadKey(true);
-            if (key.Key == ConsoleKey.Enter)
-            {
-                Console.WriteLine();
-                break;
-            }
-            else if (key.Key == ConsoleKey.Backspace)
-            {
-                if (result.Length > 0)
-                {
-                    result = result.Substring(0, result.Length - 1);
-                    Console.Write("\b \b");
-                }
-            }
-            else if (!char.IsControl(key.KeyChar))
-            {
-                result += key.KeyChar;
-                Console.Write("*");
-            }
-        }
-        return result;
     }
 }

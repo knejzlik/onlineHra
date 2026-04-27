@@ -21,8 +21,6 @@ public class GoCommand : ICommand
         _server = server;
     }
 
-    public GoCommand() : this(new WorldService(), new PlayerService(), new LoggingService(), null) { }
-
     public async Task<string> Execute(TcpClient client)
     {
         return await Execute(client, null, null, null, null);
@@ -35,7 +33,7 @@ public class GoCommand : ICommand
 
         if (player == null || string.IsNullOrEmpty(args))
         {
-            return "Usage: go <direction> (north, south, east, west, up, down)";
+            return "Pouziti: jdi <smer> (sever, jih, vychod, zapad, nahoru, dolu)";
         }
 
         if (string.IsNullOrEmpty(player.CurrentRoomId))
@@ -43,131 +41,86 @@ public class GoCommand : ICommand
             player.CurrentRoomId = player.State.CurrentRoomId;
         }
 
-        var currentRoom = ws.GetRoom(player.CurrentRoomId);
-        if (currentRoom == null)
-        {
-            player.CurrentRoomId = "start";
-            player.State.CurrentRoomId = "start";
-            currentRoom = ws.GetRoom("start");
-            
-            if (currentRoom == null)
-            {
-                return "Error: Room system not initialized. Check rooms.json file.";
-            }
-        }
+        var oldRoomId = player.CurrentRoomId;
+        var currentRoom = ws.GetRoom(oldRoomId);
+        if (currentRoom == null) return "Chyba mistnosti.";
 
         var direction = args.ToLower().Trim();
-        
-        // Support shortcut directions
+
         direction = direction switch
         {
-            "n" => "north",
-            "s" => "south",
-            "e" => "east",
-            "w" => "west",
-            "u" => "up",
-            "d" => "down",
+            "s" => "sever",
+            "j" => "jih",
+            "v" => "vychod",
+            "z" => "zapad",
+            "n" => "nahoru",
+            "d" => "dolu",
             _ => direction
         };
 
         if (!currentRoom.Exits.TryGetValue(direction, out var targetRoomId))
         {
-            return $"Cannot go {direction} from here.";
+            return $"Tudy nemuzes jit na {direction}.";
+        }
+
+        foreach (var npcId in currentRoom.Npcs)
+        {
+            var npc = ws.GetNpc(npcId);
+            if (npc != null && !npc.IsDead && npc.BlocksExit == direction)
+            {
+                return $"{npc.Name} ti blokuje cestu na {direction}! Musis ho porazit.";
+            }
+        }
+
+        if (currentRoom.RequiredItems.TryGetValue(direction, out var requiredItemId))
+        {
+            if (!player.State.Inventory.Contains(requiredItemId))
+            {
+                var item = ws.GetItem(requiredItemId);
+                var itemName = item?.Name ?? requiredItemId;
+                return $"Cesta na {direction} je zamcena. Potrebujes: {itemName}.";
+            }
+
+            player.State.Inventory.Remove(requiredItemId);
+            currentRoom.RequiredItems.Remove(direction);
+            ps.SavePlayer(player.State);
         }
 
         var targetRoom = ws.GetRoom(targetRoomId);
-        if (targetRoom == null)
+        if (targetRoom == null) return "Cilova mistnost neexistuje.";
+
+        if (_server != null)
         {
-            return "Error: Target room not found.";
+            var playersInOldRoom = _server.GetPlayersInRoom(oldRoomId);
+            foreach (var p in playersInOldRoom)
+            {
+                if (p != player)
+                {
+                    await p.SendMessageAsync($"\n{player.State.Username} odchazi smerem {direction}.");
+                }
+            }
         }
 
         player.CurrentRoomId = targetRoomId;
         player.State.CurrentRoomId = targetRoomId;
         ps.SavePlayer(player.State);
-
-        _logger.LogCommand(player.State.Username, $"go {direction}");
-
-        var sb = new StringBuilder();
-        sb.AppendLine($"You go {direction}...");
-        sb.AppendLine();
-        sb.AppendLine($"=== {targetRoom.Name} ===");
-        sb.AppendLine(targetRoom.Description);
-        sb.AppendLine();
-        sb.AppendLine("Exits:");
-        foreach (var exit in targetRoom.Exits)
-        {
-            sb.AppendLine($"  {GetDirectionName(exit.Key)} -> {exit.Value}");
-        }
-        sb.AppendLine();
-
-        // Show items in the room
-        sb.AppendLine("Items here:");
-        if (targetRoom.Items.Count == 0)
-        {
-            sb.AppendLine("  (none)");
-        }
-        else
-        {
-            foreach (var itemId in targetRoom.Items)
-            {
-                var item = ws.GetItem(itemId);
-                if (item != null)
-                {
-                    sb.AppendLine($"  - {item.Name} ({item.Description})");
-                }
-            }
-        }
-        sb.AppendLine();
-
-        // Show NPCs in the room
-        sb.AppendLine("Characters here:");
-        if (targetRoom.Npcs.Count == 0)
-        {
-            sb.AppendLine("  (none)");
-        }
-        else
-        {
-            foreach (var npcId in targetRoom.Npcs)
-            {
-                var npc = ws.GetNpc(npcId);
-                if (npc != null)
-                {
-                    sb.AppendLine($"  - {npc.Name} ({npc.Description})");
-                }
-            }
-        }
-        sb.AppendLine();
+        _logger.LogCommand(player.State.Username, $"jdi {direction}");
 
         if (_server != null)
         {
-            var playersInRoom = _server.GetPlayersInRoom(targetRoomId);
-            if (playersInRoom.Count > 0)
+            var playersInNewRoom = _server.GetPlayersInRoom(targetRoomId);
+            foreach (var p in playersInNewRoom)
             {
-                sb.AppendLine("Players here:");
-                foreach (var p in playersInRoom)
+                if (p != player)
                 {
-                    if (p != player)
-                    {
-                        sb.AppendLine($"  - {p.State.Username}");
-                    }
+                    await p.SendMessageAsync($"\n{player.State.Username} prichazi.");
                 }
             }
         }
 
-        return sb.ToString();
-    }
+        var exploreCmd = new ExploreCommand(ws, _logger, _server);
+        var roomInfo = await exploreCmd.Execute(client, player, ws);
 
-    private string GetDirectionName(string dir)
-    {
-        return dir.ToLower() switch
-        {
-            "north" => "North",
-            "south" => "South",
-            "east" => "East",
-            "west" => "West",
-            "up" => "Up",
-            "down" => "Down",
-            _ => dir
-        };
+        return $"Jdes na {direction}...\n\n" + roomInfo;
     }
 }

@@ -8,4 +8,5 @@ public class Room
     public Dictionary<string, string> Exits { get; set; } = new();
     public List<string> Items { get; set; } = new();
     public List<string> Npcs { get; set; } = new();
+    public Dictionary<string, string> RequiredItems { get; set; } = new();
 }

@@ -19,8 +19,6 @@ public class ExploreCommand : ICommand
         _server = server;
     }
 
-    public ExploreCommand() : this(new WorldService(), new LoggingService(), null) { }
-
     public async Task<string> Execute(TcpClient client)
     {
         return await Execute(client, null, null);
@@ -29,82 +27,50 @@ public class ExploreCommand : ICommand
     public async Task<string> Execute(TcpClient client, Networking.Player? player, WorldService? worldService)
     {
         var ws = worldService ?? _worldService;
-        
-        if (player == null)
-        {
-            return "Error: Player not found.";
-        }
 
-        if (string.IsNullOrEmpty(player.CurrentRoomId))
-        {
-            player.CurrentRoomId = player.State.CurrentRoomId;
-        }
-        
+        if (player == null) return "Chyba hrace.";
+        if (string.IsNullOrEmpty(player.CurrentRoomId)) player.CurrentRoomId = player.State.CurrentRoomId;
+
         var room = ws.GetRoom(player.CurrentRoomId);
-        if (room == null)
-        {
-            player.CurrentRoomId = "start";
-            player.State.CurrentRoomId = "start";
-            room = ws.GetRoom("start");
-            
-            if (room == null)
-            {
-                return "Error: Room system not initialized. Check rooms.json file.";
-            }
-        }
+        if (room == null) return "Chyba mistnosti.";
 
         var sb = new StringBuilder();
         sb.AppendLine($"=== {room.Name} ===");
         sb.AppendLine(room.Description);
         sb.AppendLine();
 
-        sb.AppendLine("Exits:");
-        if (room.Exits.Count == 0)
-        {
-            sb.AppendLine("  (none)");
-        }
+        sb.AppendLine("Vychody:");
+        if (room.Exits.Count == 0) sb.AppendLine("  (zadne)");
         else
         {
             foreach (var exit in room.Exits)
             {
-                var directionName = GetDirectionName(exit.Key);
-                sb.AppendLine($"  {directionName} -> {exit.Value}");
+                var lockedInfo = room.RequiredItems.ContainsKey(exit.Key) ? " [ZAMCENO]" : "";
+                sb.AppendLine($"  {exit.Key.ToUpper()}{lockedInfo} -> {ws.GetRoom(exit.Value)?.Name ?? exit.Value}");
             }
         }
         sb.AppendLine();
 
-        sb.AppendLine("Items here:");
-        if (room.Items.Count == 0)
-        {
-            sb.AppendLine("  (none)");
-        }
+        sb.AppendLine("Predmety zde:");
+        if (room.Items.Count == 0) sb.AppendLine("  (nic)");
         else
         {
             foreach (var itemId in room.Items)
             {
                 var item = ws.GetItem(itemId);
-                if (item != null)
-                {
-                    sb.AppendLine($"  - {item.Name} ({item.Description})");
-                }
+                if (item != null) sb.AppendLine($"  - {item.Name} ({item.Description})");
             }
         }
         sb.AppendLine();
 
-        sb.AppendLine("Characters here:");
-        if (room.Npcs.Count == 0)
-        {
-            sb.AppendLine("  (none)");
-        }
+        sb.AppendLine("Postavy zde:");
+        if (room.Npcs.Count == 0) sb.AppendLine("  (nikdo)");
         else
         {
             foreach (var npcId in room.Npcs)
             {
                 var npc = ws.GetNpc(npcId);
-                if (npc != null)
-                {
-                    sb.AppendLine($"  - {npc.Name} ({npc.Description})");
-                }
+                if (npc != null) sb.AppendLine($"  - {npc.Name} ({npc.Description})");
             }
         }
         sb.AppendLine();
@@ -112,37 +78,17 @@ public class ExploreCommand : ICommand
         if (_server != null)
         {
             var playersInRoom = _server.GetPlayersInRoom(player.CurrentRoomId);
-            sb.AppendLine("Players here:");
-            if (playersInRoom.Count == 0)
-            {
-                sb.AppendLine("  (none)");
-            }
+            sb.AppendLine("Hr·Ëi zde:");
+            if (playersInRoom.Count <= 1) sb.AppendLine("  (nikdo jiny)");
             else
             {
                 foreach (var p in playersInRoom)
                 {
-                    if (p != player)
-                    {
-                        sb.AppendLine($"  - {p.State.Username}");
-                    }
+                    if (p != player) sb.AppendLine($"  - {p.State.Username}");
                 }
             }
         }
 
-        return sb.ToString();
-    }
-
-    private string GetDirectionName(string dir)
-    {
-        return dir.ToLower() switch
-        {
-            "north" => "North",
-            "south" => "South",
-            "east" => "East",
-            "west" => "West",
-            "up" => "Up",
-            "down" => "Down",
-            _ => dir
-        };
+        return sb.ToString().TrimEnd();
     }
 }

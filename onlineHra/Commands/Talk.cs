@@ -17,8 +17,6 @@ public class TalkCommand : ICommand
         _server = server;
     }
 
-    public TalkCommand() : this(new WorldService(), null) { }
-
     public async Task<string> Execute(TcpClient client)
     {
         return await Execute(client, null, null, null);
@@ -30,7 +28,7 @@ public class TalkCommand : ICommand
 
         if (player == null || string.IsNullOrEmpty(args))
         {
-            return "Usage: talk <character name|player name> [topic]\n       whisper <player name> <message>\n       say <message> (to everyone in room)\n       broadcast <message> (to everyone in dungeon)";
+            return "Pouziti: mluv <jmeno postavy> [tema]";
         }
 
         if (string.IsNullOrEmpty(player.CurrentRoomId))
@@ -39,35 +37,12 @@ public class TalkCommand : ICommand
         }
 
         var currentRoom = ws.GetRoom(player.CurrentRoomId);
-        if (currentRoom == null)
-        {
-            player.CurrentRoomId = "start";
-            player.State.CurrentRoomId = "start";
-            currentRoom = ws.GetRoom("start");
-            
-            if (currentRoom == null)
-            {
-                return "Error: Room system not initialized. Check rooms.json file.";
-            }
-        }
+        if (currentRoom == null) return "Chyba mistnosti.";
 
         var parts = args.Split(' ', 2);
         var targetName = parts[0].ToLower().Trim();
         var topic = parts.Length > 1 ? parts[1].ToLower().Trim() : "default";
-        
-        // First check if it's a player to talk to
-        if (_server != null)
-        {
-            var allPlayers = _server.GetAllPlayers();
-            var targetPlayer = allPlayers.FirstOrDefault(p => p.State.Username.ToLower().Contains(targetName) && p != player);
-            
-            if (targetPlayer != null)
-            {
-                return $"You talk to {targetPlayer.State.Username}: \"{topic}\"\n{targetPlayer.State.Username} listens attentively.";
-            }
-        }
-        
-        // Check NPCs in current room first
+
         Npc? targetNpc = null;
         foreach (var npcId in currentRoom.Npcs)
         {
@@ -79,71 +54,60 @@ public class TalkCommand : ICommand
             }
         }
 
-        // If not in current room, search all NPCs in dungeon
         if (targetNpc == null)
         {
-            foreach (var room in ws.GetAllRooms())
-            {
-                foreach (var npcId in room.Npcs)
-                {
-                    var npc = ws.GetNpc(npcId);
-                    if (npc != null && npc.Name.ToLower().Contains(targetName))
-                    {
-                        targetNpc = npc;
-                        break;
-                    }
-                }
-                if (targetNpc != null) break;
-            }
+            return $"Zadny '{parts[0]}' tu neni.";
         }
 
-        if (targetNpc == null)
+        if (targetNpc.IsDead)
         {
-            return $"There is no '{parts[0]}' here or anywhere in the dungeon to talk to.";
+            return $"{targetNpc.Name} je po smrti. S mrtvolami se povida tezko.";
         }
 
         var sb = new StringBuilder();
-        sb.AppendLine($"{targetNpc.Name} says: \"{GetResponse(targetNpc, topic)}\"");
-        sb.AppendLine();
-        sb.AppendLine($"Available topics with {targetNpc.Name}:");
-        foreach (var dialog in targetNpc.Dialogs.Where(d => d.Trigger != "default"))
+        var response = targetNpc.Dialogs.FirstOrDefault(d => d.Trigger.ToLower() == topic)?.Response
+            ?? targetNpc.Dialogs.FirstOrDefault(d => d.Trigger == "default")?.Response
+            ?? $"{targetNpc.Name} k tomu nema co rict.";
+
+        if (targetNpc.Id == "veleknez")
         {
-            sb.AppendLine($"  * {dialog.Trigger.ToUpper()} - {GetTopicHint(dialog.Trigger)}");
+            bool hasEgg = player.State.Inventory.Contains("zlate_vejce");
+            bool hasScale = player.State.Inventory.Contains("draci_supina");
+
+            if (hasEgg && hasScale)
+            {
+                player.State.Inventory.Remove("zlate_vejce");
+                player.State.Inventory.Remove("draci_supina");
+                player.State.GameCompleted = true;
+
+                sb.AppendLine($"{targetNpc.Name} rika: \"Dokazal jsi to! Ziskal jsi Zlate vejce i Draci supinu! Ritual muze zacit...\"");
+                sb.AppendLine();
+                sb.AppendLine("=========================================================");
+                sb.AppendLine("                    GRATULUJEME!                         ");
+                sb.AppendLine("          Dokoncil jsi hru a splnil svuj ukol!           ");
+                sb.AppendLine("=========================================================");
+                return sb.ToString();
+            }
+            else if (hasEgg)
+            {
+                response = "Mas Zlate vejce, to je skvele! Ale k dokonceni ritualu stale potrebuji Draci supinu z bosse.";
+            }
+            else if (hasScale)
+            {
+                response = "Mas Draci supinu, to je skvele! Ale k dokonceni ritualu stale potrebuji Zlate vejce od draka.";
+            }
+        }
+
+        sb.AppendLine($"{targetNpc.Name} rika: \"{response}\"");
+        sb.AppendLine();
+
+        var availableTopics = targetNpc.Dialogs.Where(d => d.Trigger != "default").Select(d => d.Trigger).ToList();
+        if (availableTopics.Any())
+        {
+            sb.AppendLine($"Muze ti rict vice o: {string.Join(", ", availableTopics)}");
+            sb.AppendLine($"(Napis: mluv {targetName} <tema>)");
         }
 
         return sb.ToString();
-    }
-
-    private string GetResponse(Npc npc, string topic)
-    {
-        var response = npc.Dialogs.FirstOrDefault(d => d.Trigger.ToLower() == topic)?.Response 
-            ?? npc.Dialogs.FirstOrDefault(d => d.Trigger == "default")?.Response 
-            ?? $"{npc.Name} doesn't have anything to say about that.";
-        return response;
-    }
-
-    private string GetTopicHint(string topic)
-    {
-        return topic switch
-        {
-            "treasure" => "Ask about hidden treasures",
-            "key" => "Inquire about keys",
-            "traps" => "Learn about dangers",
-            "chalice" => "Ask about the golden chalice",
-            "journey" => "Discuss your quest",
-            "magic" => "Learn about magical powers",
-            "cavern" => "Ask about the caverns",
-            "lake" => "Inquire about the underground lake",
-            "work" => "Ask about their work",
-            "fish" => "Discuss fishing",
-            "boat" => "Ask about the boat",
-            "secret" => "Inquire about secrets",
-            "passage" => "Ask about secret passages",
-            "help" => "Request assistance",
-            "altar" => "Learn about the ancient altar",
-            "relic" => "Ask about holy relics",
-            "blessing" => "Request a blessing",
-            _ => "General topic"
-        };
     }
 }

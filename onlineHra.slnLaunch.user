@@ -1,0 +1,15 @@
+[
+  {
+    "Name": "Nový profil",
+    "Projects": [
+      {
+        "Path": "onlineHra\\onlineHra.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "onlineHraClient\\onlineHraClient.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]

@@ -1,66 +1,76 @@
 [
   {
     "Id": "start",
-    "Name": "Dragon's Entrance Cave",
-    "Description": "You stand at the entrance of a massive cave. The air is hot and smells of sulfur. Giant claw marks scar the stone walls. A narrow passage leads north into darkness.",
-    "Exits": { "north": "dragon_hall" },
-    "Items": ["rusty_sword"],
-    "Npcs": []
+    "Name": "Vstup do jeskyne",
+    "Description": "Stojis u vstupu do obrovske jeskyne. Na sever vede velka brana.",
+    "Exits": { "sever": "chodba" },
+    "Items": [],
+    "Npcs": [ "pruvodce" ],
+    "RequiredItems": {}
   },
   {
-    "Id": "dragon_hall",
-    "Name": "Hall of Dragons",
-    "Description": "A vast chamber filled with ancient dragon skeletons. Their bones gleam in the flickering torchlight. Massive pillars carved with dragon motifs support the ceiling. Passages lead south, east to the treasury, west to the lair, and up to the nesting grounds.",
-    "Exits": { "south": "start", "east": "treasury", "west": "dragon_lair", "up": "nesting_grounds" },
-    "Items": ["dragon_scale", "ancient_amulet"],
-    "Npcs": ["dragon_keeper"]
+    "Id": "chodba",
+    "Name": "Hlavni chodba",
+    "Description": "Velke rozcesti. Cesty vedou na vsechny strany.",
+    "Exits": {
+      "jih": "start",
+      "zapad": "zbrojnice",
+      "sever": "trezor",
+      "vychod": "doupe",
+      "nahoru": "vez"
+    },
+    "Items": [],
+    "Npcs": [],
+    "RequiredItems": {
+      "sever": "rezavy_klic"
+    }
   },
   {
-    "Id": "treasury",
-    "Name": "Dragon's Treasury",
-    "Description": "Mountains of gold coins and precious gems fill this chamber. Ancient artifacts from conquered kingdoms glitter everywhere. In the center lies a massive golden egg pulsing with magical energy. The only exit is west.",
-    "Exits": { "west": "dragon_hall" },
-    "Items": ["golden_egg", "ruby_necklace", "crown_of_kings"],
-    "Npcs": ["greedy_spirit"]
+    "Id": "zbrojnice",
+    "Name": "Zbrojnice",
+    "Description": "Stara zbrojnice, kde predchozi hrdinove nechali svou vybavu.",
+    "Exits": { "vychod": "chodba" },
+    "Items": [ "ostry_mec", "rezavy_klic" ],
+    "Npcs": [],
+    "RequiredItems": {}
   },
   {
-    "Id": "dragon_lair",
-    "Name": "The Dragon's Lair",
-    "Description": "You've found it - the lair of the great red dragon Vermithrax! The massive beast sleeps on a bed of molten rock, its scales glowing like embers. Its breathing sends waves of heat through the room. A small tunnel leads east, and you dare not wake the dragon.",
-    "Exits": { "east": "dragon_hall" },
-    "Items": ["dragon_fire_gem"],
-    "Npcs": ["vermithrax"]
+    "Id": "trezor",
+    "Name": "Zamceny Trezor",
+    "Description": "Temna mistnost ukryvajici stare artefakty.",
+    "Exits": { "jih": "chodba" },
+    "Items": [ "falesne_vejce" ],
+    "Npcs": [],
+    "RequiredItems": {}
   },
   {
-    "Id": "nesting_grounds",
-    "Name": "Dragon Nesting Grounds",
-    "Description": "High above the main halls, this rocky ledge overlooks the entire cavern system. Several dragon eggs rest in nests of straw and ash. The view is breathtaking but dangerous - one wrong step means falling into the abyss below. The only safe path is down.",
-    "Exits": { "down": "dragon_hall", "north": "sky_perch" },
-    "Items": ["dragon_egg", "feather_of_phoenix"],
-    "Npcs": ["egg_guardian"]
+    "Id": "doupe",
+    "Name": "Draci doupe",
+    "Description": "Doupe obrovskeho draka. Je tu priserne vedro.",
+    "Exits": { "zapad": "chodba" },
+    "Items": [],
+    "Npcs": [ "drak" ],
+    "RequiredItems": {}
   },
   {
-    "Id": "sky_perch",
-    "Name": "Sky Perch",
-    "Description": "The highest point of the dragon's domain. Through a hole in the cave ceiling, you can see the open sky. This is where the dragons come to take flight. The wind howls through the opening. Below lies the nesting grounds.",
-    "Exits": { "south": "nesting_grounds" },
-    "Items": ["wind_stone", "eagle_feather"],
-    "Npcs": ["old_dragon"]
+    "Id": "vez",
+    "Name": "Strazni vez",
+    "Description": "Predsin chramu. Dalsi cesta vede po schodech nahoru, ale stoji tu boss.",
+    "Exits": {
+      "dolu": "chodba",
+      "nahoru": "chram"
+    },
+    "Items": [],
+    "Npcs": [ "boss_strazce" ],
+    "RequiredItems": {}
   },
   {
-    "Id": "secret_chamber",
-    "Name": "Secret Chamber of Legends",
-    "Description": "Hidden behind a waterfall of lava, this secret chamber contains murals depicting the birth of the first dragons. Ancient weapons of dragon slayers line the walls. A pedestal holds the legendary Dragonslayer Blade. Exits lead east and through a hidden passage north.",
-    "Exits": { "east": "dragon_lair", "north": "temple_of_flames" },
-    "Items": ["dragonslayer_blade", "shield_of_heroes"],
-    "Npcs": ["fallen_warrior"]
-  },
-  {
-    "Id": "temple_of_flames",
-    "Name": "Temple of Flames",
-    "Description": "An ancient temple dedicated to the Dragon Gods. Eternal flames burn in braziers around a massive statue of a five-headed dragon. The power here is overwhelming. Only the worthy may claim the ultimate treasure. The exit is south.",
-    "Exits": { "south": "secret_chamber" },
-    "Items": ["flame_heart", "divine_scroll"],
-    "Npcs": ["high_priest"]
+    "Id": "chram",
+    "Name": "Chram",
+    "Description": "Cil cesty a posvatne misto.",
+    "Exits": { "dolu": "vez" },
+    "Items": [],
+    "Npcs": [ "veleknez" ],
+    "RequiredItems": {}
   }
 ]
