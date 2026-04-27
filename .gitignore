@@ -1,1 +1,52 @@
-Nothing should be ignored since only a source code file (.cs) was modified and there are no build artifacts, dependencies, or temporary files in the changes.
+```
+# Compiled and build artifacts
+*.exe
+*.dll
+*.pdb
+*.obj
+*.o
+*.a
+*.so
+*.class
+*.pyc
+__pycache__/
+*.pyo
+*.pyd
+bin/
+obj/
+
+# Dependencies
+node_modules/
+venv/
+.venv/
+.env
+.env.local
+.env.*
+
+# Logs and temp files
+*.log
+*.tmp
+*.temp
+*.cache
+*.swp
+*.swo
+
+# Editors
+.vscode/
+.idea/
+*.userprefs
+*.user
+*.sln.docstates
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build outputs
+dist/
+build/
+target/
+release/
+debug/
+out/
+```
