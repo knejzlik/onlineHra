@@ -11,6 +11,7 @@ class Program
     static async Task Main(string[] args)
     {
         Console.WriteLine("=== MUD Client ===");
+        Console.Write("Server address (default: localhost): ");
         var serverAddressInput = Console.ReadLine();
         var serverAddress = string.IsNullOrWhiteSpace(serverAddressInput) ? "localhost" : serverAddressInput.Trim();
         

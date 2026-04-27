@@ -1,1 +1,43 @@
-Nothing should be ignored based on the provided file changes. The only modified file is 'onlineHraClient/Program.cs', which is a source code file and should not be added to .gitignore.
+```
+# Build artifacts
+*.exe
+*.dll
+*.pdb
+*.obj
+*.lib
+*.so
+*.dylib
+*.class
+*.jar
+*.war
+*.ear
+
+# Dependencies
+packages/
+bin/
+obj/
+out/
+.vs/
+.vshost.*
+
+# Logs
+*.log
+
+# Environment
+.env
+.env.local
+*.env.*
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# User-specific files
+.vscode/
+.idea/
+
+# Test coverage
+coverage/
+htmlcov/
+*.coverage
+```
