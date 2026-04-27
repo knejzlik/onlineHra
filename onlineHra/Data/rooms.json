@@ -1,74 +1,66 @@
 [
   {
     "Id": "start",
-    "Name": "Starting Room",
-    "Description": "You are in a small stone room. The walls are damp and the air smells of moss. You see an exit to the north.",
-    "Exits": { "north": "hallway" },
-    "Items": ["torch"],
+    "Name": "Dragon's Entrance Cave",
+    "Description": "You stand at the entrance of a massive cave. The air is hot and smells of sulfur. Giant claw marks scar the stone walls. A narrow passage leads north into darkness.",
+    "Exits": { "north": "dragon_hall" },
+    "Items": ["rusty_sword"],
     "Npcs": []
   },
   {
-    "Id": "hallway",
-    "Name": "Long Hallway",
-    "Description": "A long dark corridor stretching from north to south. To the east are dust-covered doors. A narrow passage leads west.",
-    "Exits": { "south": "start", "north": "treasure_room", "east": "library", "west": "cavern" },
-    "Items": ["key"],
-    "Npcs": ["guard"]
+    "Id": "dragon_hall",
+    "Name": "Hall of Dragons",
+    "Description": "A vast chamber filled with ancient dragon skeletons. Their bones gleam in the flickering torchlight. Massive pillars carved with dragon motifs support the ceiling. Passages lead south, east to the treasury, west to the lair, and up to the nesting grounds.",
+    "Exits": { "south": "start", "east": "treasury", "west": "dragon_lair", "up": "nesting_grounds" },
+    "Items": ["dragon_scale", "ancient_amulet"],
+    "Npcs": ["dragon_keeper"]
   },
   {
-    "Id": "library",
-    "Name": "Old Library",
-    "Description": "A room filled with ancient books. Dust covers every surface. An old sage stands in the corner studying scrolls.",
-    "Exits": { "west": "hallway", "north": "study" },
-    "Items": ["book", "scroll"],
-    "Npcs": ["sage"]
+    "Id": "treasury",
+    "Name": "Dragon's Treasury",
+    "Description": "Mountains of gold coins and precious gems fill this chamber. Ancient artifacts from conquered kingdoms glitter everywhere. In the center lies a massive golden egg pulsing with magical energy. The only exit is west.",
+    "Exits": { "west": "dragon_hall" },
+    "Items": ["golden_egg", "ruby_necklace", "crown_of_kings"],
+    "Npcs": ["greedy_spirit"]
   },
   {
-    "Id": "study",
-    "Name": "Sage's Study",
-    "Description": "A small study filled with magical artifacts and bubbling potions. Strange symbols glow on the walls.",
-    "Exits": { "south": "library" },
-    "Items": ["potion", "crystal"],
-    "Npcs": []
+    "Id": "dragon_lair",
+    "Name": "The Dragon's Lair",
+    "Description": "You've found it - the lair of the great red dragon Vermithrax! The massive beast sleeps on a bed of molten rock, its scales glowing like embers. Its breathing sends waves of heat through the room. A small tunnel leads east, and you dare not wake the dragon.",
+    "Exits": { "east": "dragon_hall" },
+    "Items": ["dragon_fire_gem"],
+    "Npcs": ["vermithrax"]
   },
   {
-    "Id": "cavern",
-    "Name": "Dark Cavern",
-    "Description": "A vast underground cavern with stalactites hanging from the ceiling. Water drips somewhere in the darkness. Paths lead east and down.",
-    "Exits": { "east": "hallway", "down": "underground_lake" },
-    "Items": ["lantern"],
-    "Npcs": ["miner"]
+    "Id": "nesting_grounds",
+    "Name": "Dragon Nesting Grounds",
+    "Description": "High above the main halls, this rocky ledge overlooks the entire cavern system. Several dragon eggs rest in nests of straw and ash. The view is breathtaking but dangerous - one wrong step means falling into the abyss below. The only safe path is down.",
+    "Exits": { "down": "dragon_hall", "north": "sky_perch" },
+    "Items": ["dragon_egg", "feather_of_phoenix"],
+    "Npcs": ["egg_guardian"]
   },
   {
-    "Id": "underground_lake",
-    "Name": "Underground Lake",
-    "Description": "A serene underground lake reflects your torchlight. A small boat is tied to a wooden dock. The only way out is up.",
-    "Exits": { "up": "cavern" },
-    "Items": ["fishing_rod"],
-    "Npcs": ["fisherman"]
+    "Id": "sky_perch",
+    "Name": "Sky Perch",
+    "Description": "The highest point of the dragon's domain. Through a hole in the cave ceiling, you can see the open sky. This is where the dragons come to take flight. The wind howls through the opening. Below lies the nesting grounds.",
+    "Exits": { "south": "nesting_grounds" },
+    "Items": ["wind_stone", "eagle_feather"],
+    "Npcs": ["old_dragon"]
   },
   {
-    "Id": "treasure_room",
-    "Name": "Treasure Chamber",
-    "Description": "A magnificent chamber with a chest in the center. Gold coins sparkle in the torchlight. This is the goal of your journey!",
-    "Exits": { "south": "hallway", "east": "secret_passage" },
-    "Items": ["golden_chalice", "jewel"],
-    "Npcs": []
+    "Id": "secret_chamber",
+    "Name": "Secret Chamber of Legends",
+    "Description": "Hidden behind a waterfall of lava, this secret chamber contains murals depicting the birth of the first dragons. Ancient weapons of dragon slayers line the walls. A pedestal holds the legendary Dragonslayer Blade. Exits lead east and through a hidden passage north.",
+    "Exits": { "east": "dragon_lair", "north": "temple_of_flames" },
+    "Items": ["dragonslayer_blade", "shield_of_heroes"],
+    "Npcs": ["fallen_warrior"]
   },
   {
-    "Id": "secret_passage",
-    "Name": "Secret Passage",
-    "Description": "A hidden corridor behind the treasure chamber. Ancient torches line the walls, still burning after centuries.",
-    "Exits": { "west": "treasure_room", "north": "ancient_altar" },
-    "Items": ["ancient_coin"],
-    "Npcs": ["ghost"]
-  },
-  {
-    "Id": "ancient_altar",
-    "Name": "Ancient Altar",
-    "Description": "A mysterious stone altar covered in forgotten runes. A powerful energy emanates from this sacred place.",
-    "Exits": { "south": "secret_passage" },
-    "Items": ["holy_relic"],
-    "Npcs": ["priest"]
+    "Id": "temple_of_flames",
+    "Name": "Temple of Flames",
+    "Description": "An ancient temple dedicated to the Dragon Gods. Eternal flames burn in braziers around a massive statue of a five-headed dragon. The power here is overwhelming. Only the worthy may claim the ultimate treasure. The exit is south.",
+    "Exits": { "south": "secret_chamber" },
+    "Items": ["flame_heart", "divine_scroll"],
+    "Npcs": ["high_priest"]
   }
 ]

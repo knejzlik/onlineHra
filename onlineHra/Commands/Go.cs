@@ -57,6 +57,18 @@ public class GoCommand : ICommand
         }
 
         var direction = args.ToLower().Trim();
+        
+        // Support shortcut directions
+        direction = direction switch
+        {
+            "n" => "north",
+            "s" => "south",
+            "e" => "east",
+            "w" => "west",
+            "u" => "up",
+            "d" => "down",
+            _ => direction
+        };
 
         if (!currentRoom.Exits.TryGetValue(direction, out var targetRoomId))
         {

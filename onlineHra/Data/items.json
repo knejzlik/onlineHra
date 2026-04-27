@@ -1,74 +1,92 @@
 [
   {
-    "Id": "torch",
-    "Name": "Torch",
-    "Description": "An old wooden torch that is still burning.",
-    "Weight": 2
-  },
-  {
-    "Id": "key",
-    "Name": "Old Key",
-    "Description": "A rusty iron key. It might open some doors.",
-    "Weight": 1
-  },
-  {
-    "Id": "book",
-    "Name": "Dusty Book",
-    "Description": "A book of ancient legends. Contains information about lost treasures.",
-    "Weight": 3
-  },
-  {
-    "Id": "golden_chalice",
-    "Name": "Golden Chalice",
-    "Description": "A beautiful golden chalice adorned with precious gems. This is the legendary artifact!",
+    "Id": "rusty_sword",
+    "Name": "Rusty Sword",
+    "Description": "An old sword covered in rust, but still sharp enough to defend yourself.",
     "Weight": 5
   },
   {
-    "Id": "scroll",
-    "Name": "Ancient Scroll",
-    "Description": "A fragile scroll covered in mysterious runes. It seems to contain a map.",
-    "Weight": 1
-  },
-  {
-    "Id": "potion",
-    "Name": "Mysterious Potion",
-    "Description": "A glowing blue potion bubbling with magical energy. Effects unknown.",
-    "Weight": 1
-  },
-  {
-    "Id": "crystal",
-    "Name": "Magic Crystal",
-    "Description": "A pulsating crystal that hums with arcane power.",
-    "Weight": 2
-  },
-  {
-    "Id": "lantern",
-    "Name": "Oil Lantern",
-    "Description": "A sturdy lantern filled with oil. Provides better light than a torch.",
+    "Id": "dragon_scale",
+    "Name": "Dragon Scale",
+    "Description": "A shimmering red scale from an ancient dragon. It radiates warmth.",
     "Weight": 3
   },
   {
-    "Id": "fishing_rod",
-    "Name": "Fishing Rod",
-    "Description": "A well-worn fishing rod, perfect for catching underground fish.",
+    "Id": "ancient_amulet",
+    "Name": "Ancient Amulet",
+    "Description": "A golden amulet engraved with dragon runes. It pulses with magical energy.",
+    "Weight": 1
+  },
+  {
+    "Id": "golden_egg",
+    "Name": "Golden Dragon Egg",
+    "Description": "A massive egg made of pure gold, pulsing with inner fire. Legend says a dragon will hatch from it.",
+    "Weight": 10
+  },
+  {
+    "Id": "ruby_necklace",
+    "Name": "Ruby Necklace",
+    "Description": "A stunning necklace of rubies that glow like dragon fire.",
     "Weight": 2
   },
   {
-    "Id": "jewel",
-    "Name": "Precious Jewel",
-    "Description": "A sparkling ruby that seems to glow from within.",
-    "Weight": 1
-  },
-  {
-    "Id": "ancient_coin",
-    "Name": "Ancient Coin",
-    "Description": "A gold coin from a forgotten civilization. Bears the image of an ancient king.",
-    "Weight": 1
-  },
-  {
-    "Id": "holy_relic",
-    "Name": "Holy Relic",
-    "Description": "A sacred artifact blessed by ancient priests. Radiates divine energy.",
+    "Id": "crown_of_kings",
+    "Name": "Crown of Dragon Kings",
+    "Description": "The crown worn by ancient kings who ruled alongside dragons.",
     "Weight": 4
+  },
+  {
+    "Id": "dragon_fire_gem",
+    "Name": "Dragon Fire Gem",
+    "Description": "A gem containing the essence of dragon fire. It burns hot to the touch.",
+    "Weight": 2
+  },
+  {
+    "Id": "dragon_egg",
+    "Name": "Dragon Egg",
+    "Description": "A large speckled egg, warm to the touch. You can hear something moving inside.",
+    "Weight": 8
+  },
+  {
+    "Id": "feather_of_phoenix",
+    "Name": "Phoenix Feather",
+    "Description": "A brilliant feather from a phoenix, glowing with eternal flame.",
+    "Weight": 1
+  },
+  {
+    "Id": "wind_stone",
+    "Name": "Wind Stone",
+    "Description": "A blue stone that howls with the sound of wind. Dragons use it to call the winds.",
+    "Weight": 3
+  },
+  {
+    "Id": "eagle_feather",
+    "Name": "Giant Eagle Feather",
+    "Description": "A massive feather from an eagle that soars above the dragon peaks.",
+    "Weight": 1
+  },
+  {
+    "Id": "dragonslayer_blade",
+    "Name": "Dragonslayer Blade",
+    "Description": "The legendary sword forged specifically to slay dragons. Its edge never dulls.",
+    "Weight": 6
+  },
+  {
+    "Id": "shield_of_heroes",
+    "Name": "Shield of Heroes",
+    "Description": "A shield carried by legendary dragon slayers. It bears the marks of countless battles.",
+    "Weight": 8
+  },
+  {
+    "Id": "flame_heart",
+    "Name": "Heart of Flames",
+    "Description": "The crystallized heart of an ancient fire elemental. Ultimate source of dragon power.",
+    "Weight": 5
+  },
+  {
+    "Id": "divine_scroll",
+    "Name": "Divine Scroll",
+    "Description": "A scroll containing the secrets of dragon summoning, written by the gods themselves.",
+    "Weight": 1
   }
 ]

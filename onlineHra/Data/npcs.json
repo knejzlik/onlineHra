@@ -1,68 +1,79 @@
 [
   {
-    "Id": "guard",
-    "Name": "Guard",
-    "Description": "An old guard in rusty armor. He looks like he has been standing here for hundreds of years.",
+    "Id": "dragon_keeper",
+    "Name": "Dragon Keeper",
+    "Description": "An ancient spirit bound to guard the dragon halls. Its armor is decorated with dragon motifs.",
     "Dialogs": [
-      { "Trigger": "default", "Response": "I have stood here for ages. Are you looking for the treasure? Go through the hallway to the north, but beware of traps." },
-      { "Trigger": "treasure", "Response": "The treasure is hidden in the room to the north. But you need the key that lies in the hallway." },
-      { "Trigger": "key", "Response": "The key? I saw it lying in the hallway. Someone must have dropped it there." },
-      { "Trigger": "traps", "Response": "The ancient ones left many traps. Watch your step near pressure plates and loose stones." }
+      { "Trigger": "default", "Response": "Welcome, brave soul. Few dare to enter the domain of the dragons. Seek the golden egg in the treasury, but beware the greedy spirit." },
+      { "Trigger": "dragon", "Response": "The great Vermithrax sleeps in the lair to the west. Do not disturb the beast unless you seek death." },
+      { "Trigger": "treasury", "Response": "The treasury lies to the east, filled with treasures beyond imagination. But greed has claimed many adventurers." },
+      { "Trigger": "egg", "Response": "The golden egg is said to contain the essence of a newborn dragon. Only the pure of heart can claim it." }
     ]
   },
   {
-    "Id": "sage",
-    "Name": "Sage",
-    "Description": "An old man with a long white beard. His eyes shine with wisdom.",
+    "Id": "greedy_spirit",
+    "Name": "Greedy Spirit",
+    "Description": "A translucent figure hovering over the treasure, its eyes fixed on the gold with eternal longing.",
     "Dialogs": [
-      { "Trigger": "default", "Response": "Welcome, traveler. Are you seeking the golden chalice? I wish you luck on your journey." },
-      { "Trigger": "chalice", "Response": "The golden chalice has the power to grant one wish. But many who sought it never returned." },
-      { "Trigger": "journey", "Response": "Your journey begins in a small stone room. Continue north and you will find what you seek." },
-      { "Trigger": "magic", "Response": "Magic flows through these ancient halls. The crystals in my study can enhance your abilities." }
+      { "Trigger": "default", "Response": "Mine... all mine... You cannot take what belongs to me!" },
+      { "Trigger": "treasure", "Response": "The gold... the gems... they called to me in life and they bind me in death." },
+      { "Trigger": "leave", "Response": "Leave? I cannot leave... The treasure is my prison and my purpose." },
+      { "Trigger": "help", "Response": "Perhaps... if you took only one item... I might let you pass. But the golden egg... never!" }
     ]
   },
   {
-    "Id": "miner",
-    "Name": "Miner",
-    "Description": "A weathered miner with a pickaxe, covered in dust from years of digging.",
+    "Id": "vermithrax",
+    "Name": "Vermithrax the Red",
+    "Description": "A colossal red dragon, its scales glowing like molten lava. Even in sleep, its presence is overwhelming.",
     "Dialogs": [
-      { "Trigger": "default", "Response": "Another adventurer? Be careful down here. The caverns are deep and full of dangers." },
-      { "Trigger": "cavern", "Response": "These caverns stretch for miles. I've found many treasures but also many terrors." },
-      { "Trigger": "lake", "Response": "The underground lake below is peaceful. A fisherman lives there. He knows secrets about these depths." },
-      { "Trigger": "work", "Response": "I've been mining these caves for decades. The gems here are unlike any found on the surface." }
+      { "Trigger": "default", "Response": "*The dragon's eye opens slightly* Mortal... you dare enter my domain? Speak your purpose or burn." },
+      { "Trigger": "fight", "Response": "*Vermithrax laughs, sending flames dancing across the ceiling* You? Fight me? How adorable... and fatal." },
+      { "Trigger": "peace", "Response": "Peace? Dragons remember every slight, every theft. But... you show courage. Leave now and live." },
+      { "Trigger": "treasure", "Response": "My hoard is legendary across the realms. The fire gem is its crown - touch it and perish." }
     ]
   },
   {
-    "Id": "fisherman",
-    "Name": "Fisherman",
-    "Description": "A quiet fisherman sitting by the underground lake, patiently waiting for a catch.",
+    "Id": "egg_guardian",
+    "Name": "Egg Guardian",
+    "Description": "A stoic warrior clad in scale mail, standing watch over the dragon nests with unwavering dedication.",
     "Dialogs": [
-      { "Trigger": "default", "Response": "Shhh... the fish are biting today. Care to try your luck?" },
-      { "Trigger": "fish", "Response": "The blind fish in this lake have never seen sunlight. They taste surprisingly good." },
-      { "Trigger": "boat", "Response": "This boat has carried many souls across these dark waters. Some never came back." },
-      { "Trigger": "secret", "Response": "Between you and me, there's a secret passage behind the treasure chamber. Few know about it." }
+      { "Trigger": "default", "Response": "Halt! These eggs contain the future of dragonkind. Only those with noble intentions may pass." },
+      { "Trigger": "eggs", "Response": "Each egg holds a new life, a new guardian of the skies. Treat them with respect." },
+      { "Trigger": "phoenix", "Response": "The phoenix feather is a gift from the sky spirits. It grants protection from fire." },
+      { "Trigger": "pass", "Response": "Your heart seems true. You may ascend to the Sky Perch, but beware the old dragon there." }
     ]
   },
   {
-    "Id": "ghost",
-    "Name": "Ghost",
-    "Description": "A translucent figure floating in the passage, remnants of an ancient warrior.",
+    "Id": "old_dragon",
+    "Name": "Ancient Dragon",
+    "Description": "An elderly dragon whose scales have turned silver with age. Its wisdom spans millennia.",
     "Dialogs": [
-      { "Trigger": "default", "Response": "Who disturbs my eternal rest? Speak quickly, mortal." },
-      { "Trigger": "passage", "Response": "This secret passage was once known only to the high priests. Now it's my domain." },
-      { "Trigger": "treasure", "Response": "Gold means nothing to the dead. But for you living ones, it seems to mean everything." },
-      { "Trigger": "help", "Response": "I cannot help you directly, but I can warn you: the altar ahead holds great power and great danger." }
+      { "Trigger": "default", "Response": "Ah, a visitor. How refreshing. I am Aethros, oldest of my kind. Sit, talk with me." },
+      { "Trigger": "history", "Response": "I have seen empires rise and fall. Dragons were here before the first stone was laid by human hands." },
+      { "Trigger": "wind", "Response": "The wind stone calls to the storms. With it, one can summon gales that shake mountains." },
+      { "Trigger": "advice", "Response": "Seek the Temple of Flames if you wish to understand the true bond between dragons and mortals." }
     ]
   },
   {
-    "Id": "priest",
-    "Name": "Priest",
-    "Description": "A hooded figure chanting prayers at the ancient altar, surrounded by mystical energy.",
+    "Id": "fallen_warrior",
+    "Name": "Fallen Warrior",
+    "Description": "The ghost of a legendary dragon slayer, still wearing his battered armor and gripping an ethereal sword.",
     "Dialogs": [
-      { "Trigger": "default", "Response": "Blessings upon you, child. You have come far to reach this sacred place." },
-      { "Trigger": "altar", "Response": "This altar predates all recorded history. Its runes hold the power of the ancients." },
-      { "Trigger": "relic", "Response": "The holy relic upon this altar can heal any wound or curse any enemy. Choose wisely how you use it." },
-      { "Trigger": "blessing", "Response": "May the ancient ones guide your path. Take this blessing as you continue your quest." }
+      { "Trigger": "default", "Response": "Another who seeks to follow my path? Learn from my mistake, young one." },
+      { "Trigger": "mistake", "Response": "I sought glory, not understanding. The Dragonslayer Blade chose me, but pride consumed me." },
+      { "Trigger": "blade", "Response": "The blade is no mere weapon. It judges the wielder. Only the humble may master it." },
+      { "Trigger": "temple", "Response": "Beyond lies the Temple of Flames. There you will learn the truth about dragons and those who hunt them." }
+    ]
+  },
+  {
+    "Id": "high_priest",
+    "Name": "High Priest of Flames",
+    "Description": "A robed figure kneeling before the five-headed dragon statue, surrounded by dancing flames that do not burn.",
+    "Dialogs": [
+      { "Trigger": "default", "Response": "Blessings of the Five-Headed One be upon you. You have journeyed far, seeker." },
+      { "Trigger": "gods", "Response": "The Dragon Gods created both fire and life. They teach us that destruction and creation are one." },
+      { "Trigger": "heart", "Response": "The Heart of Flames is the ultimate gift. It can grant power beyond mortal comprehension." },
+      { "Trigger": "worthy", "Response": "To be worthy, you must prove yourself not as a slayer of dragons, but as their ally." }
     ]
   }
 ]
