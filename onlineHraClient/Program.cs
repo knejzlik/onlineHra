@@ -44,7 +44,7 @@ class Program
                         var line = await reader.ReadLineAsync();
                         if (line == null) break;
                         
-                        // Capture input state under lock, then do console operations outside
+                        // Capture input state under lock
                         string capturedInput;
                         int capturedCursor;
                         lock (lockObj)
@@ -53,21 +53,27 @@ class Program
                             capturedCursor = cursorPosition;
                         }
                         
-                        // Save cursor position and clear current line
-                        int currentLine = Console.CursorTop;
-                        Console.SetCursorPosition(0, currentLine);
-                        string currentLineContent = ">>> " + capturedInput;
-                        int spacesNeeded = Math.Max(0, Console.WindowWidth - currentLineContent.Length);
-                        Console.Write(currentLineContent + new string(' ', spacesNeeded));
-                        Console.SetCursorPosition(0, currentLine);
-                        
-                        // Print the server message above
+                        // Simply write the message and redisplay prompt
+                        // Avoid complex cursor manipulation that can fail
+                        Console.WriteLine();
                         Console.WriteLine(line);
-                        
-                        // Re-display the prompt and current input
                         Console.Write(">>> ");
                         Console.Write(capturedInput);
-                        Console.SetCursorPosition(4 + capturedCursor, currentLine + 1);
+                        
+                        // Try to set cursor position, but don't crash if it fails
+                        try
+                        {
+                            int targetLeft = 4 + capturedCursor;
+                            int targetTop = Console.CursorTop;
+                            if (targetLeft < Console.BufferWidth && targetTop < Console.BufferHeight)
+                            {
+                                Console.SetCursorPosition(targetLeft, targetTop);
+                            }
+                        }
+                        catch
+                        {
+                            // If we can't set cursor position, just leave it at the end
+                        }
                     }
                 }
                 catch (Exception ex)
