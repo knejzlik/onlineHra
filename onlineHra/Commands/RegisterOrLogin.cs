@@ -17,7 +17,7 @@ public class RegisterOrLogin : ICommand
 
         while (nextStep)
         {
-            await tempWriter.WriteLineAsync("Chces se prihlasit (napis: login) nebo zaregistrovat (napis: register)?");
+            await tempWriter.WriteLineAsync("Login nebo register?");
             await tempWriter.WriteAsync(">>> ");
             string? input = await tempReader.ReadLineAsync();
 
