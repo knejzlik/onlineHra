@@ -15,13 +15,5 @@ class Program
         new Server(65525).Start();
         Console.Read();
     }
-        /*Restart serveru- hrac napise hrat znovu nebo enter a spawne te na zacatku a itemy se vrati, nova instance tridy
-         * kdyz vyhraje napise to vsem ze vyhrali
-         * Anglictina
-         * Na vyhru globalne ty itemy
-         * command odevzdej
-         * git console, git add *, git commit -m comment, git push --force
-         * 
-         * 
-          */
+
 }

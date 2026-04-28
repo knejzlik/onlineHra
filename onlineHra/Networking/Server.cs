@@ -14,6 +14,9 @@ public class Server
     private readonly object _connectionsLock = new object();
     private Dictionary<string, ICommand> commands;
 
+    public bool IsGameWon { get; set; } = false;
+    public HashSet<string> SubmittedItems { get; set; } = new();
+
     public Server(int port)
     {
         var baseDir = AppContext.BaseDirectory;
@@ -34,18 +37,19 @@ public class Server
         Console.WriteLine("Server started on port 65525");
         _logger.LogInfo("Server started on port 65525");
 
-        commands.Add("pomoc", new HelpCommand(_worldService, _logger, this));
-        commands.Add("prozkoumej", new ExploreCommand(_worldService, _logger, this));
-        commands.Add("jdi", new GoCommand(_worldService, _playerService, _logger, this));
-        commands.Add("inventar", new InventoryCommand(_worldService, _playerService));
-        commands.Add("vezmi", new TakeCommand(_worldService, _playerService, _logger));
-        commands.Add("zahod", new DropCommand(_worldService, _playerService, _logger));
-        commands.Add("mluv", new TalkCommand(_worldService, this));
-        commands.Add("rekni", new SayCommand(_logger, this));
-        commands.Add("septej", new WhisperCommand(this));
-        commands.Add("rozhlas", new BroadcastCommand(this));
-        commands.Add("utoc", new AttackCommand(_worldService, _playerService, _logger, this));
-        commands.Add("vymen", new TradeCommand(_worldService, _playerService, _logger, this));
+        commands.Add("help", new HelpCommand(_worldService, _logger, this));
+        commands.Add("explore", new ExploreCommand(_worldService, _logger, this));
+        commands.Add("go", new GoCommand(_worldService, _playerService, _logger, this));
+        commands.Add("inventory", new InventoryCommand(_worldService, _playerService));
+        commands.Add("take", new TakeCommand(_worldService, _playerService, _logger));
+        commands.Add("drop", new DropCommand(_worldService, _playerService, _logger));
+        commands.Add("talk", new TalkCommand(_worldService, this));
+        commands.Add("say", new SayCommand(_logger, this));
+        commands.Add("whisper", new WhisperCommand(this));
+        commands.Add("broadcast", new BroadcastCommand(this));
+        commands.Add("attack", new AttackCommand(_worldService, _playerService, _logger, this));
+        commands.Add("trade", new TradeCommand(_worldService, _playerService, _logger, this));
+        commands.Add("give", new GiveCommand(_worldService, _playerService, _logger, this));
 
         _ = AcceptLoopAsync();
         _ = CheckForDisconnectsAsync();
@@ -79,7 +83,7 @@ public class Server
 
             _logger.LogPlayerConnect(p.State.Username);
 
-            await p.SendMessageAsync("Vitej v textovem MUDu!");
+            await p.SendMessageAsync("Welcome to the MUD game!");
             var exploreCmd = new ExploreCommand(_worldService, _logger, this);
             var welcomeMsg = await exploreCmd.Execute(tcpc, p, _worldService);
             await p.SendMessageAsync(welcomeMsg);
@@ -108,6 +112,21 @@ public class Server
                 if (inp == null) break;
 
                 inp = inp.Trim();
+
+                if (IsGameWon)
+                {
+                    if (inp.ToLower() == "restart" || string.IsNullOrEmpty(inp) || inp.ToLower() == "hrat znovu")
+                    {
+                        await RestartGame();
+                        continue;
+                    }
+                    else
+                    {
+                        await writer.WriteAsync("Game is over! Press Enter or type 'restart' to play again.\n");
+                        continue;
+                    }
+                }
+
                 if (string.IsNullOrEmpty(inp)) continue;
 
                 _logger.LogCommand(client.State.Username, inp);
@@ -124,7 +143,7 @@ public class Server
                 }
                 else
                 {
-                    response = $"Neznamy prikaz '{commandName}'. Napis 'pomoc' pro seznam prikazu.";
+                    response = $"Unknown command '{commandName}'. Type 'help' for a list of commands.";
                 }
 
                 await writer.WriteAsync(response + "\n");
@@ -151,20 +170,62 @@ public class Server
     {
         return commandName switch
         {
-            "pomoc" => await ((HelpCommand)cmd).Execute(player.Client, player),
-            "prozkoumej" => await ((ExploreCommand)cmd).Execute(player.Client, player, _worldService),
-            "jdi" => await ((GoCommand)cmd).Execute(player.Client, player, _worldService, _playerService, args),
-            "inventar" => await ((InventoryCommand)cmd).Execute(player.Client, player, _worldService, _playerService),
-            "vezmi" => await ((TakeCommand)cmd).Execute(player.Client, player, _worldService, _playerService, args),
-            "zahod" => await ((DropCommand)cmd).Execute(player.Client, player, _worldService, _playerService, args),
-            "mluv" => await ((TalkCommand)cmd).Execute(player.Client, player, _worldService, args),
-            "rekni" => await ((SayCommand)cmd).Execute(player.Client, player, _worldService, args),
-            "septej" => await ((WhisperCommand)cmd).Execute(player.Client, player, _worldService, args),
-            "rozhlas" => await ((BroadcastCommand)cmd).Execute(player.Client, player, _worldService, args),
-            "utoc" => await ((AttackCommand)cmd).Execute(player.Client, player, _worldService, _playerService, args),
-            "vymen" => await ((TradeCommand)cmd).Execute(player.Client, player, _worldService, _playerService, args),
+            "help" => await ((HelpCommand)cmd).Execute(player.Client, player),
+            "explore" => await ((ExploreCommand)cmd).Execute(player.Client, player, _worldService),
+            "go" => await ((GoCommand)cmd).Execute(player.Client, player, _worldService, _playerService, args),
+            "inventory" => await ((InventoryCommand)cmd).Execute(player.Client, player, _worldService, _playerService),
+            "take" => await ((TakeCommand)cmd).Execute(player.Client, player, _worldService, _playerService, args),
+            "drop" => await ((DropCommand)cmd).Execute(player.Client, player, _worldService, _playerService, args),
+            "talk" => await ((TalkCommand)cmd).Execute(player.Client, player, _worldService, args),
+            "say" => await ((SayCommand)cmd).Execute(player.Client, player, _worldService, args),
+            "whisper" => await ((WhisperCommand)cmd).Execute(player.Client, player, _worldService, args),
+            "broadcast" => await ((BroadcastCommand)cmd).Execute(player.Client, player, _worldService, args),
+            "attack" => await ((AttackCommand)cmd).Execute(player.Client, player, _worldService, _playerService, args),
+            "trade" => await ((TradeCommand)cmd).Execute(player.Client, player, _worldService, _playerService, args),
+            "give" => await ((GiveCommand)cmd).Execute(player.Client, player, _worldService, _playerService, args),
             _ => await cmd.Execute(player.Client)
         };
+    }
+
+    public void TriggerWin()
+    {
+        IsGameWon = true;
+        var msg = "\n=========================================================\n" +
+                  "                    CONGRATULATIONS!                     \n" +
+                  "       The ritual is complete! Everyone wins!            \n" +
+                  "=========================================================\n" +
+                  "Press Enter or type 'restart' to play again.";
+
+        foreach (var p in GetAllPlayers())
+        {
+            p.SendMessageAsync(msg).Wait();
+        }
+    }
+
+    public async Task RestartGame()
+    {
+        IsGameWon = false;
+        SubmittedItems.Clear();
+        _worldService = new WorldService("Data");
+
+        var players = GetAllPlayers();
+
+        foreach (var p in players)
+        {
+            p.State.Inventory.Clear();
+            p.State.CurrentRoomId = "start";
+            p.CurrentRoomId = "start";
+            p.State.GameCompleted = false;
+            _playerService.SavePlayer(p.State);
+        }
+
+        foreach (var p in players)
+        {
+            await p.SendMessageAsync("\n--- THE WORLD HAS BEEN RESET ---");
+            var exploreCmd = new ExploreCommand(_worldService, _logger, this);
+            var roomInfo = await exploreCmd.Execute(p.Client, p, _worldService);
+            await p.SendMessageAsync(roomInfo);
+        }
     }
 
     private void Disconnect(Player client)

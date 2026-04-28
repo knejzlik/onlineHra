@@ -28,31 +28,31 @@ public class ExploreCommand : ICommand
     {
         var ws = worldService ?? _worldService;
 
-        if (player == null) return "Chyba hrace.";
+        if (player == null) return "Player error.";
         if (string.IsNullOrEmpty(player.CurrentRoomId)) player.CurrentRoomId = player.State.CurrentRoomId;
 
         var room = ws.GetRoom(player.CurrentRoomId);
-        if (room == null) return "Chyba mistnosti.";
+        if (room == null) return "Room error.";
 
         var sb = new StringBuilder();
         sb.AppendLine($"=== {room.Name} ===");
         sb.AppendLine(room.Description);
         sb.AppendLine();
 
-        sb.AppendLine("Vychody:");
-        if (room.Exits.Count == 0) sb.AppendLine("  (zadne)");
+        sb.AppendLine("Exits:");
+        if (room.Exits.Count == 0) sb.AppendLine("  (none)");
         else
         {
             foreach (var exit in room.Exits)
             {
-                var lockedInfo = room.RequiredItems.ContainsKey(exit.Key) ? " [ZAMCENO]" : "";
+                var lockedInfo = room.RequiredItems.ContainsKey(exit.Key) ? " [LOCKED]" : "";
                 sb.AppendLine($"  {exit.Key.ToUpper()}{lockedInfo} -> {ws.GetRoom(exit.Value)?.Name ?? exit.Value}");
             }
         }
         sb.AppendLine();
 
-        sb.AppendLine("Predmety zde:");
-        if (room.Items.Count == 0) sb.AppendLine("  (nic)");
+        sb.AppendLine("Items here:");
+        if (room.Items.Count == 0) sb.AppendLine("  (none)");
         else
         {
             foreach (var itemId in room.Items)
@@ -63,8 +63,8 @@ public class ExploreCommand : ICommand
         }
         sb.AppendLine();
 
-        sb.AppendLine("Postavy zde:");
-        if (room.Npcs.Count == 0) sb.AppendLine("  (nikdo)");
+        sb.AppendLine("Characters here:");
+        if (room.Npcs.Count == 0) sb.AppendLine("  (none)");
         else
         {
             foreach (var npcId in room.Npcs)
@@ -78,8 +78,8 @@ public class ExploreCommand : ICommand
         if (_server != null)
         {
             var playersInRoom = _server.GetPlayersInRoom(player.CurrentRoomId);
-            sb.AppendLine("Hr·Ëi zde:");
-            if (playersInRoom.Count <= 1) sb.AppendLine("  (nikdo jiny)");
+            sb.AppendLine("Players here:");
+            if (playersInRoom.Count <= 1) sb.AppendLine("  (no one else)");
             else
             {
                 foreach (var p in playersInRoom)

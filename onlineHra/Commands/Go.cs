@@ -33,7 +33,7 @@ public class GoCommand : ICommand
 
         if (player == null || string.IsNullOrEmpty(args))
         {
-            return "Pouziti: jdi <smer> (sever, jih, vychod, zapad, nahoru, dolu)";
+            return "Usage: go <direction> (north, south, east, west, up, down)";
         }
 
         if (string.IsNullOrEmpty(player.CurrentRoomId))
@@ -43,24 +43,24 @@ public class GoCommand : ICommand
 
         var oldRoomId = player.CurrentRoomId;
         var currentRoom = ws.GetRoom(oldRoomId);
-        if (currentRoom == null) return "Chyba mistnosti.";
+        if (currentRoom == null) return "Room error.";
 
         var direction = args.ToLower().Trim();
 
         direction = direction switch
         {
-            "s" => "sever",
-            "j" => "jih",
-            "v" => "vychod",
-            "z" => "zapad",
-            "n" => "nahoru",
-            "d" => "dolu",
+            "n" => "north",
+            "s" => "south",
+            "e" => "east",
+            "w" => "west",
+            "u" => "up",
+            "d" => "down",
             _ => direction
         };
 
         if (!currentRoom.Exits.TryGetValue(direction, out var targetRoomId))
         {
-            return $"Tudy nemuzes jit na {direction}.";
+            return $"Cannot go {direction} from here.";
         }
 
         foreach (var npcId in currentRoom.Npcs)
@@ -68,7 +68,7 @@ public class GoCommand : ICommand
             var npc = ws.GetNpc(npcId);
             if (npc != null && !npc.IsDead && npc.BlocksExit == direction)
             {
-                return $"{npc.Name} ti blokuje cestu na {direction}! Musis ho porazit.";
+                return $"{npc.Name} blocks your path to the {direction}! You must defeat them.";
             }
         }
 
@@ -78,7 +78,7 @@ public class GoCommand : ICommand
             {
                 var item = ws.GetItem(requiredItemId);
                 var itemName = item?.Name ?? requiredItemId;
-                return $"Cesta na {direction} je zamcena. Potrebujes: {itemName}.";
+                return $"The path to the {direction} is locked. You need: {itemName}.";
             }
 
             player.State.Inventory.Remove(requiredItemId);
@@ -87,7 +87,7 @@ public class GoCommand : ICommand
         }
 
         var targetRoom = ws.GetRoom(targetRoomId);
-        if (targetRoom == null) return "Cilova mistnost neexistuje.";
+        if (targetRoom == null) return "Target room not found.";
 
         if (_server != null)
         {
@@ -96,7 +96,7 @@ public class GoCommand : ICommand
             {
                 if (p != player)
                 {
-                    await p.SendMessageAsync($"\n{player.State.Username} odchazi smerem {direction}.");
+                    await p.SendMessageAsync($"\n{player.State.Username} leaves {direction}.");
                 }
             }
         }
@@ -104,7 +104,7 @@ public class GoCommand : ICommand
         player.CurrentRoomId = targetRoomId;
         player.State.CurrentRoomId = targetRoomId;
         ps.SavePlayer(player.State);
-        _logger.LogCommand(player.State.Username, $"jdi {direction}");
+        _logger.LogCommand(player.State.Username, $"go {direction}");
 
         if (_server != null)
         {
@@ -113,7 +113,7 @@ public class GoCommand : ICommand
             {
                 if (p != player)
                 {
-                    await p.SendMessageAsync($"\n{player.State.Username} prichazi.");
+                    await p.SendMessageAsync($"\n{player.State.Username} arrives.");
                 }
             }
         }
@@ -121,6 +121,6 @@ public class GoCommand : ICommand
         var exploreCmd = new ExploreCommand(ws, _logger, _server);
         var roomInfo = await exploreCmd.Execute(client, player, ws);
 
-        return $"Jdes na {direction}...\n\n" + roomInfo;
+        return $"You go {direction}...\n\n" + roomInfo;
     }
 }

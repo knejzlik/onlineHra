@@ -1,32 +1,32 @@
 [
   {
-    "Id": "ostry_mec",
-    "Name": "Ostry mec",
-    "Description": "Perfektne nabrouseny mec. Nutnost pro boj s monstry.",
+    "Id": "sharp_sword",
+    "Name": "Sharp Sword",
+    "Description": "Perfectly sharpened sword. Necessary for fighting monsters.",
     "Weight": 2
   },
   {
-    "Id": "rezavy_klic",
-    "Name": "Rezavy klic",
-    "Description": "Stary zelezny klic k trezoru.",
+    "Id": "rusty_key",
+    "Name": "Rusty Key",
+    "Description": "Old iron key for the vault.",
     "Weight": 1
   },
   {
-    "Id": "falesne_vejce",
-    "Name": "Tezke vejce",
-    "Description": "Obrovske a tezkopadne vejce.",
+    "Id": "fake_egg",
+    "Name": "Large Egg",
+    "Description": "A massive egg.",
     "Weight": 8
   },
   {
-    "Id": "zlate_vejce",
-    "Name": "Zlate vejce",
-    "Description": "Prave draci vejce. Je o dost lehci, nez to predchozi.",
+    "Id": "golden_egg",
+    "Name": "Golden Egg",
+    "Description": "True dragon egg. Much lighter.",
     "Weight": 5
   },
   {
-    "Id": "draci_supina",
-    "Name": "Draci supina",
-    "Description": "Zariva cervena supina, ktera odpadla z bosse.",
+    "Id": "dragon_scale",
+    "Name": "Dragon Scale",
+    "Description": "Glowing red scale dropped by the boss.",
     "Weight": 3
   }
 ]

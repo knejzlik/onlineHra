@@ -1,76 +1,76 @@
 [
   {
     "Id": "start",
-    "Name": "Vstup do jeskyne",
-    "Description": "Stojis u vstupu do obrovske jeskyne. Na sever vede velka brana.",
-    "Exits": { "sever": "chodba" },
+    "Name": "Cave Entrance",
+    "Description": "You stand at the entrance. A large gate leads north.",
+    "Exits": { "north": "hallway" },
     "Items": [],
-    "Npcs": [ "pruvodce" ],
+    "Npcs": [ "guide" ],
     "RequiredItems": {}
   },
   {
-    "Id": "chodba",
-    "Name": "Hlavni chodba",
-    "Description": "Velke rozcesti. Cesty vedou na vsechny strany.",
+    "Id": "hallway",
+    "Name": "Main Hallway",
+    "Description": "Large crossroad. Paths lead in all directions.",
     "Exits": {
-      "jih": "start",
-      "zapad": "zbrojnice",
-      "sever": "trezor",
-      "vychod": "doupe",
-      "nahoru": "vez"
+      "south": "start",
+      "west": "armory",
+      "north": "vault",
+      "east": "lair",
+      "up": "tower"
     },
     "Items": [],
     "Npcs": [],
     "RequiredItems": {
-      "sever": "rezavy_klic"
+      "north": "rusty_key"
     }
   },
   {
-    "Id": "zbrojnice",
-    "Name": "Zbrojnice",
-    "Description": "Stara zbrojnice, kde predchozi hrdinove nechali svou vybavu.",
-    "Exits": { "vychod": "chodba" },
-    "Items": [ "ostry_mec", "rezavy_klic" ],
+    "Id": "armory",
+    "Name": "Armory",
+    "Description": "Old armory holding forgotten equipment.",
+    "Exits": { "east": "hallway" },
+    "Items": [ "sharp_sword", "rusty_key" ],
     "Npcs": [],
     "RequiredItems": {}
   },
   {
-    "Id": "trezor",
-    "Name": "Zamceny Trezor",
-    "Description": "Temna mistnost ukryvajici stare artefakty.",
-    "Exits": { "jih": "chodba" },
-    "Items": [ "falesne_vejce" ],
+    "Id": "vault",
+    "Name": "Locked Vault",
+    "Description": "Dark room hiding ancient artifacts.",
+    "Exits": { "south": "hallway" },
+    "Items": [ "fake_egg" ],
     "Npcs": [],
     "RequiredItems": {}
   },
   {
-    "Id": "doupe",
-    "Name": "Draci doupe",
-    "Description": "Doupe obrovskeho draka. Je tu priserne vedro.",
-    "Exits": { "zapad": "chodba" },
+    "Id": "lair",
+    "Name": "Dragon Lair",
+    "Description": "Dragon's nest. Extremely hot.",
+    "Exits": { "west": "hallway" },
     "Items": [],
-    "Npcs": [ "drak" ],
+    "Npcs": [ "dragon" ],
     "RequiredItems": {}
   },
   {
-    "Id": "vez",
-    "Name": "Strazni vez",
-    "Description": "Predsin chramu. Dalsi cesta vede po schodech nahoru, ale stoji tu boss.",
+    "Id": "tower",
+    "Name": "Watchtower",
+    "Description": "Temple antechamber. Stairs lead up, but a boss blocks the way.",
     "Exits": {
-      "dolu": "chodba",
-      "nahoru": "chram"
+      "down": "hallway",
+      "up": "temple"
     },
     "Items": [],
-    "Npcs": [ "boss_strazce" ],
+    "Npcs": [ "boss_guard" ],
     "RequiredItems": {}
   },
   {
-    "Id": "chram",
-    "Name": "Chram",
-    "Description": "Cil cesty a posvatne misto.",
-    "Exits": { "dolu": "vez" },
+    "Id": "temple",
+    "Name": "Temple",
+    "Description": "Sacred destination and end of the journey.",
+    "Exits": { "down": "tower" },
     "Items": [],
-    "Npcs": [ "veleknez" ],
+    "Npcs": [ "high_priest" ],
     "RequiredItems": {}
   }
 ]

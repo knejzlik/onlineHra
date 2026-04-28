@@ -12,12 +12,12 @@ class Program
 
     static async Task Main(string[] args)
     {
-        Console.WriteLine("=== MUD Klient ===");
-        Console.Write("Adresa serveru (vychozi: localhost): ");
+        Console.WriteLine("=== MUD Client ===");
+        Console.Write("Server address (default: localhost): ");
         var serverAddressInput = Console.ReadLine();
         var serverAddress = string.IsNullOrWhiteSpace(serverAddressInput) ? "localhost" : serverAddressInput.Trim();
 
-        Console.Write("Port serveru (vychozi: 65525): ");
+        Console.Write("Server port (default: 65525): ");
         var portInput = Console.ReadLine()?.Trim() ?? "65525";
 
         if (!int.TryParse(portInput, out int port))
@@ -28,10 +28,10 @@ class Program
         try
         {
             using var client = new TcpClient();
-            Console.WriteLine($"Pripojovani k {serverAddress}:{port}...");
+            Console.WriteLine($"Connecting to {serverAddress}:{port}...");
 
             await client.ConnectAsync(serverAddress, port);
-            Console.WriteLine("Pripojeno!");
+            Console.WriteLine("Connected!");
 
             using var reader = new StreamReader(client.GetStream());
             using var writer = new StreamWriter(client.GetStream()) { AutoFlush = true };
@@ -51,7 +51,7 @@ class Program
 
                         lock (lockObj)
                         {
-                            if (line.ToLower().Contains("heslo:") || line.ToLower().Contains("password:"))
+                            if (line.ToLower().Contains("password:"))
                             {
                                 isPasswordMode = true;
                             }
@@ -91,7 +91,7 @@ class Program
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"\nSpojeni ztraceno: {ex.Message}");
+                    Console.WriteLine($"\nConnection lost: {ex.Message}");
                 }
             });
 
@@ -185,11 +185,11 @@ class Program
             }
 
             client.Close();
-            Console.WriteLine("Odpojeno od serveru.");
+            Console.WriteLine("Disconnected from server.");
         }
         catch (Exception ex)
         {
-            Console.WriteLine($"Chyba: {ex.Message}");
+            Console.WriteLine($"Error: {ex.Message}");
         }
     }
 }

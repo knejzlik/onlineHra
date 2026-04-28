@@ -5,14 +5,14 @@ using onlineHra.Networking;
 
 namespace onlineHra.Commands;
 
-public class TradeCommand : ICommand
+public class GiveCommand : ICommand
 {
     private readonly WorldService _worldService;
     private readonly PlayerService _playerService;
     private readonly LoggingService _logger;
     private readonly Server? _server;
 
-    public TradeCommand(WorldService worldService, PlayerService playerService, LoggingService logger, Server? server = null)
+    public GiveCommand(WorldService worldService, PlayerService playerService, LoggingService logger, Server? server = null)
     {
         _worldService = worldService;
         _playerService = playerService;
@@ -32,21 +32,15 @@ public class TradeCommand : ICommand
 
         if (player == null || string.IsNullOrEmpty(args))
         {
-            return "Usage: trade <item>";
+            return "Usage: give <item>";
         }
 
-        if (string.IsNullOrEmpty(player.CurrentRoomId))
+        if (player.CurrentRoomId != "temple")
         {
-            player.CurrentRoomId = player.State.CurrentRoomId;
+            return "You can only give items to the High Priest in the temple.";
         }
 
-        var currentRoom = ws.GetRoom(player.CurrentRoomId);
-        if (currentRoom == null) return "Room error.";
-
-        if (!currentRoom.Npcs.Contains("dragon"))
-        {
-            return "There is no one to trade with here. You need to find the dragon.";
-        }
+        if (_server == null) return "Server error.";
 
         var itemName = args.ToLower().Trim();
         string? foundItemId = null;
@@ -66,29 +60,34 @@ public class TradeCommand : ICommand
             return $"You don't have '{itemName}' in your inventory.";
         }
 
-        if (foundItemId != "fake_egg")
+        if (foundItemId != "golden_egg" && foundItemId != "dragon_scale")
         {
-            return "The dragon has absolutely no interest in this item.";
+            return "The High Priest doesn't want this item.";
         }
 
-        player.State.Inventory.Remove("fake_egg");
-        player.State.Inventory.Add("golden_egg");
+        if (_server.SubmittedItems.Contains(foundItemId))
+        {
+            return "This item has already been given by someone else.";
+        }
+
+        player.State.Inventory.Remove(foundItemId);
         ps.SavePlayer(player.State);
+        _server.SubmittedItems.Add(foundItemId);
 
-        _logger.LogCommand(player.State.Username, "trade fake_egg");
+        _logger.LogCommand(player.State.Username, $"give {foundItemId}");
 
-        if (_server != null)
+        var broadcastMsg = $"\n{player.State.Username} has given the {ws.GetItem(foundItemId)?.Name}!";
+        foreach (var p in _server.GetAllPlayers())
         {
-            var playersInRoom = _server.GetPlayersInRoom(player.CurrentRoomId);
-            foreach (var p in playersInRoom)
-            {
-                if (p != player)
-                {
-                    await p.SendMessageAsync($"\n{player.State.Username} successfully traded with the dragon.");
-                }
-            }
+            if (p != player) await p.SendMessageAsync(broadcastMsg);
         }
 
-        return "You handed the Heavy Egg to the dragon. The dragon was overjoyed and let you take the real Golden Egg in return!";
+        if (_server.SubmittedItems.Contains("golden_egg") && _server.SubmittedItems.Contains("dragon_scale"))
+        {
+            _server.TriggerWin();
+            return $"You handed over the {ws.GetItem(foundItemId)?.Name}.";
+        }
+
+        return $"You handed over the {ws.GetItem(foundItemId)?.Name}. The High Priest still needs the other artifact.";
     }
 }

@@ -17,7 +17,7 @@ public class RegisterOrLogin : ICommand
 
         while (nextStep)
         {
-            await tempWriter.WriteLineAsync("Login nebo register?");
+            await tempWriter.WriteLineAsync("Do you want to login or register?");
             await tempWriter.WriteAsync(">>> ");
             string? input = await tempReader.ReadLineAsync();
 
@@ -34,7 +34,7 @@ public class RegisterOrLogin : ICommand
                 state = 2;
                 break;
             }
-            await tempWriter.WriteLineAsync("Neznamy prikaz. Zkus to znovu.");
+            await tempWriter.WriteLineAsync("Unknown command. Try again.");
         }
 
         switch (state)
@@ -43,32 +43,32 @@ public class RegisterOrLogin : ICommand
                 {
                     while (true)
                     {
-                        await tempWriter.WriteLineAsync("Zadej uzivatelske jmeno:");
+                        await tempWriter.WriteLineAsync("Enter username:");
                         await tempWriter.WriteAsync(">>> ");
                         var username = await tempReader.ReadLineAsync();
                         if (string.IsNullOrWhiteSpace(username)) continue;
 
-                        await tempWriter.WriteLineAsync("Zadej heslo:");
+                        await tempWriter.WriteLineAsync("Enter password:");
                         await tempWriter.WriteAsync(">>> ");
                         var password = await tempReader.ReadLineAsync();
 
-                        await tempWriter.WriteLineAsync("Zopakuj heslo:");
+                        await tempWriter.WriteLineAsync("Repeat password:");
                         await tempWriter.WriteAsync(">>> ");
                         var password2 = await tempReader.ReadLineAsync();
 
                         if (password != password2)
                         {
-                            await tempWriter.WriteLineAsync("Hesla se neshoduji.");
+                            await tempWriter.WriteLineAsync("Passwords do not match.");
                             continue;
                         }
 
                         if (!playerService.Register(username, password))
                         {
-                            await tempWriter.WriteLineAsync("Uzivatelske jmeno uz existuje.");
+                            await tempWriter.WriteLineAsync("Username already exists.");
                             continue;
                         }
 
-                        await tempWriter.WriteLineAsync("Registrace uspesna!");
+                        await tempWriter.WriteLineAsync("Registration successful!");
 
                         return $"{username};{password}";
                     }
@@ -77,12 +77,12 @@ public class RegisterOrLogin : ICommand
                 {
                     while (true)
                     {
-                        await tempWriter.WriteLineAsync("Zadej uzivatelske jmeno:");
+                        await tempWriter.WriteLineAsync("Enter username:");
                         await tempWriter.WriteAsync(">>> ");
                         var username = await tempReader.ReadLineAsync();
                         if (string.IsNullOrWhiteSpace(username)) return string.Empty;
 
-                        await tempWriter.WriteLineAsync("Zadej heslo:");
+                        await tempWriter.WriteLineAsync("Enter password:");
                         await tempWriter.WriteAsync(">>> ");
                         var password = await tempReader.ReadLineAsync();
 
@@ -90,11 +90,11 @@ public class RegisterOrLogin : ICommand
 
                         if (playerState != null)
                         {
-                            await tempWriter.WriteLineAsync("Prihlaseni uspesne!");
+                            await tempWriter.WriteLineAsync("Login successful!");
                             return $"{playerState.Username};{playerState.PasswordHash}";
                         }
 
-                        await tempWriter.WriteLineAsync("Spatne jmeno nebo heslo. Zkus to znovu.");
+                        await tempWriter.WriteLineAsync("Invalid username or password. Try again.");
                     }
                 }
         }

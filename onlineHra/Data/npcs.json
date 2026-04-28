@@ -1,16 +1,16 @@
 [
   {
-    "Id": "pruvodce",
-    "Name": "Zraneny vojak",
-    "Description": "Opira se o stenu a krvaci.",
+    "Id": "guide",
+    "Name": "Wounded Soldier",
+    "Description": "Leaning against the wall, bleeding.",
     "Dialogs": [
       {
         "Trigger": "default",
-        "Response": "Hledas cestu k veleknezi? Klíč k trezoru a zbran jsou ve zbrojnici na zapade."
+        "Response": "Looking for the High Priest? The vault key and a weapon are in the armory to the west."
       },
       {
-        "Trigger": "drak",
-        "Response": "Drak na vychode neda sve vejce jen tak. Najdi to tezke falesne a zkus mu ho vymenit."
+        "Trigger": "dragon",
+        "Response": "The dragon to the east won't give up her egg easily. Find the heavy fake one and try to trade."
       }
     ],
     "Hp": 0,
@@ -19,13 +19,13 @@
     "BlocksExit": ""
   },
   {
-    "Id": "drak",
-    "Name": "Matka draku",
-    "Description": "Obrovska dracice bedlive hlida sve male zlate vejce.",
+    "Id": "dragon",
+    "Name": "Dragon Mother",
+    "Description": "Massive dragon guarding her small golden egg.",
     "Dialogs": [
       {
         "Trigger": "default",
-        "Response": "*Vrci* Moje male vejce... chci nejake mnohem vetsi!"
+        "Response": "*Growls* My small egg... I want a much bigger one!"
       }
     ],
     "Hp": 0,
@@ -34,28 +34,28 @@
     "BlocksExit": ""
   },
   {
-    "Id": "boss_strazce",
-    "Name": "Temny Rytir",
-    "Description": "Obrovsky rytir v cerne zbroji. Hrozi ti obourucnim mecem.",
+    "Id": "boss_guard",
+    "Name": "Dark Knight",
+    "Description": "Huge knight in black armor. Threatens you with a greatsword.",
     "Dialogs": [
       {
         "Trigger": "default",
-        "Response": "Dál neprojdeš! Nikdo nevstoupi do chramu!"
+        "Response": "You shall not pass! No one enters the temple!"
       }
     ],
     "Hp": 10,
     "Attack": 5,
     "IsDead": false,
-    "BlocksExit": "nahoru"
+    "BlocksExit": "up"
   },
   {
-    "Id": "veleknez",
-    "Name": "Veleknez",
-    "Description": "Postava v roze klecici pred vecnym ohnem.",
+    "Id": "high_priest",
+    "Name": "High Priest",
+    "Description": "Robed figure kneeling before eternal flames.",
     "Dialogs": [
       {
         "Trigger": "default",
-        "Response": "Vítej, hledači. Potřebuji Zlate vejce a Draci supinu k dokončení rituálu."
+        "Response": "Welcome. I need the Golden Egg and Dragon Scale to complete the ritual. Use the 'submit' command."
       }
     ],
     "Hp": 0,

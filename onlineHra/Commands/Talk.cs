@@ -28,7 +28,7 @@ public class TalkCommand : ICommand
 
         if (player == null || string.IsNullOrEmpty(args))
         {
-            return "Pouziti: mluv <jmeno postavy> [tema]";
+            return "Usage: talk <character> [topic]";
         }
 
         if (string.IsNullOrEmpty(player.CurrentRoomId))
@@ -37,7 +37,7 @@ public class TalkCommand : ICommand
         }
 
         var currentRoom = ws.GetRoom(player.CurrentRoomId);
-        if (currentRoom == null) return "Chyba mistnosti.";
+        if (currentRoom == null) return "Room error.";
 
         var parts = args.Split(' ', 2);
         var targetName = parts[0].ToLower().Trim();
@@ -56,56 +56,27 @@ public class TalkCommand : ICommand
 
         if (targetNpc == null)
         {
-            return $"Zadny '{parts[0]}' tu neni.";
+            return $"There is no '{parts[0]}' here.";
         }
 
         if (targetNpc.IsDead)
         {
-            return $"{targetNpc.Name} je po smrti. S mrtvolami se povida tezko.";
+            return $"{targetNpc.Name} is dead. It's hard to talk to corpses.";
         }
 
         var sb = new StringBuilder();
         var response = targetNpc.Dialogs.FirstOrDefault(d => d.Trigger.ToLower() == topic)?.Response
             ?? targetNpc.Dialogs.FirstOrDefault(d => d.Trigger == "default")?.Response
-            ?? $"{targetNpc.Name} k tomu nema co rict.";
+            ?? $"{targetNpc.Name} doesn't have anything to say about that.";
 
-        if (targetNpc.Id == "veleknez")
-        {
-            bool hasEgg = player.State.Inventory.Contains("zlate_vejce");
-            bool hasScale = player.State.Inventory.Contains("draci_supina");
-
-            if (hasEgg && hasScale)
-            {
-                player.State.Inventory.Remove("zlate_vejce");
-                player.State.Inventory.Remove("draci_supina");
-                player.State.GameCompleted = true;
-
-                sb.AppendLine($"{targetNpc.Name} rika: \"Dokazal jsi to! Ziskal jsi Zlate vejce i Draci supinu! Ritual muze zacit...\"");
-                sb.AppendLine();
-                sb.AppendLine("=========================================================");
-                sb.AppendLine("                    GRATULUJEME!                         ");
-                sb.AppendLine("          Dokoncil jsi hru a splnil svuj ukol!           ");
-                sb.AppendLine("=========================================================");
-                return sb.ToString();
-            }
-            else if (hasEgg)
-            {
-                response = "Mas Zlate vejce, to je skvele! Ale k dokonceni ritualu stale potrebuji Draci supinu z bosse.";
-            }
-            else if (hasScale)
-            {
-                response = "Mas Draci supinu, to je skvele! Ale k dokonceni ritualu stale potrebuji Zlate vejce od draka.";
-            }
-        }
-
-        sb.AppendLine($"{targetNpc.Name} rika: \"{response}\"");
+        sb.AppendLine($"{targetNpc.Name} says: \"{response}\"");
         sb.AppendLine();
 
         var availableTopics = targetNpc.Dialogs.Where(d => d.Trigger != "default").Select(d => d.Trigger).ToList();
         if (availableTopics.Any())
         {
-            sb.AppendLine($"Muze ti rict vice o: {string.Join(", ", availableTopics)}");
-            sb.AppendLine($"(Napis: mluv {targetName} <tema>)");
+            sb.AppendLine($"Can tell you more about: {string.Join(", ", availableTopics)}");
+            sb.AppendLine($"(Type: talk {targetName} <topic>)");
         }
 
         return sb.ToString();

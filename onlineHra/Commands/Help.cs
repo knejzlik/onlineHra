@@ -27,28 +27,21 @@ public class HelpCommand : ICommand
     {
         var sb = new StringBuilder();
 
-        sb.AppendLine("=== NAPOVEDA ===");
-        sb.AppendLine("jdi <smer> - pohyb (sever/jih/vychod/zapad/nahoru/dolu nebo s/j/v/z/n/d)");
-        sb.AppendLine("prozkoumej - zobrazi informace o tve aktualni mistnosti");
-        sb.AppendLine("inventar - zobrazi tve veci a kapacitu");
-        sb.AppendLine("vezmi <predmet> - sebere predmet z mistnosti");
-        sb.AppendLine("zahod <predmet> - zahodi predmet na zem");
-        sb.AppendLine("utoc <postava> - zautoci na monstrum (potrebujes zbran)");
-        sb.AppendLine("vymen <predmet> - nabidne predmet k vymene NPC");
-        sb.AppendLine("mluv <postava> [tema] - promluvi s NPC (ukaze ti dostupna temata)");
-        sb.AppendLine("rekni <zprava> - posle zpravu hracum ve stejne mistnosti");
-        sb.AppendLine("septej <hrac> <zprava> - soukroma zprava jinemu hraci");
-        sb.AppendLine("rozhlas <zprava> - globalni zprava vsem hracum ve hre");
-        sb.AppendLine("pomoc - zobrazi tuto napovedu");
-        sb.AppendLine();
+        sb.AppendLine("=== HELP ===");
+        sb.AppendLine("go <direction> - movement (north/south/east/west/up/down or n/s/e/w/u/d)");
+        sb.AppendLine("explore - display information about your current room");
+        sb.AppendLine("inventory - view your items and capacity");
+        sb.AppendLine("take <item> - pick up an item from the room");
+        sb.AppendLine("drop <item> - drop an item on the ground");
+        sb.AppendLine("attack <character> - attack a monster (requires a weapon)");
+        sb.AppendLine("trade <item> - offer an item for trade to an NPC");
+        sb.AppendLine("submit <item> - hand over a quest artifact to the High Priest");
+        sb.AppendLine("talk <character> [topic] - talk to an NPC");
+        sb.AppendLine("say <message> - send a message to players in the same room");
+        sb.AppendLine("whisper <player> <message> - private message to another player");
+        sb.AppendLine("broadcast <message> - global message to all players");
+        sb.AppendLine("help - display this help");
 
-        if (player != null)
-        {
-            var exploreCmd = new ExploreCommand(_worldService, _logger, _server);
-            var roomInfo = await exploreCmd.Execute(client, player, _worldService);
-            sb.AppendLine(roomInfo);
-        }
-
-        return sb.ToString();
+        return await Task.FromResult(sb.ToString());
     }
 }

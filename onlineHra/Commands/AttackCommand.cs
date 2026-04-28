@@ -31,7 +31,7 @@ public class AttackCommand : ICommand
 
         if (player == null || string.IsNullOrEmpty(args))
         {
-            return "Pouziti: utoc <postava>";
+            return "Usage: attack <character>";
         }
 
         if (string.IsNullOrEmpty(player.CurrentRoomId))
@@ -40,7 +40,7 @@ public class AttackCommand : ICommand
         }
 
         var currentRoom = ws.GetRoom(player.CurrentRoomId);
-        if (currentRoom == null) return "Chyba mistnosti.";
+        if (currentRoom == null) return "Room error.";
 
         var targetName = args.ToLower().Trim();
         Npc? targetNpc = null;
@@ -57,33 +57,35 @@ public class AttackCommand : ICommand
 
         if (targetNpc == null)
         {
-            return $"Zadny '{args}' tu neni.";
+            return $"There is no '{args}' here.";
         }
 
         if (targetNpc.IsDead)
         {
-            return $"{targetNpc.Name} uz je mrtvy.";
+            return $"{targetNpc.Name} is already dead.";
         }
 
         if (targetNpc.Hp <= 0)
         {
-            return $"Na {targetNpc.Name} nemas duvod utocit.";
+            return $"You have no reason to attack {targetNpc.Name}.";
         }
 
-        if (!player.State.Inventory.Contains("ostry_mec"))
+        if (!player.State.Inventory.Contains("sharp_sword"))
         {
-            return $"Zkusil jsi zautocit holyma rukama, ale {targetNpc.Name} te snadno odrazil. Potrebujes zbran!";
+            return $"You tried to attack with your bare hands, but {targetNpc.Name} easily repelled you. You need a weapon!";
         }
 
         targetNpc.Hp -= 10;
         targetNpc.IsDead = true;
 
-        if (targetNpc.Id == "boss_strazce")
+        if (targetNpc.Id == "boss_guard")
         {
-            currentRoom.Items.Add("draci_supina");
+            currentRoom.Items.Add("dragon_scale");
         }
 
-        _logger.LogCommand(player.State.Username, $"utoc {targetNpc.Id}");
+        currentRoom.Npcs.Remove(targetNpc.Id);
+
+        _logger.LogCommand(player.State.Username, $"attack {targetNpc.Id}");
 
         if (_server != null)
         {
@@ -92,11 +94,11 @@ public class AttackCommand : ICommand
             {
                 if (p != player)
                 {
-                    await p.SendMessageAsync($"\n{player.State.Username} smrtelne zasahl {targetNpc.Name}!");
+                    await p.SendMessageAsync($"\n{player.State.Username} strikes down {targetNpc.Name}!");
                 }
             }
         }
 
-        return $"Zautocil jsi mecem. {targetNpc.Name} s revum padl mrtvy k zemi! Vypadla z nej Draci supina.";
+        return $"You attacked with your sword. {targetNpc.Name} roared and fell dead to the ground! A Dragon Scale dropped from the body.";
     }
 }
