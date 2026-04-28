@@ -12,7 +12,10 @@ class Program
 
     static async Task Main(string[] args)
     {
+        Console.ForegroundColor = ConsoleColor.Cyan;
         Console.WriteLine("=== MUD Client ===");
+        Console.ResetColor();
+
         Console.Write("Server address (default: localhost): ");
         var serverAddressInput = Console.ReadLine();
         var serverAddress = string.IsNullOrWhiteSpace(serverAddressInput) ? "localhost" : serverAddressInput.Trim();
@@ -31,7 +34,10 @@ class Program
             Console.WriteLine($"Connecting to {serverAddress}:{port}...");
 
             await client.ConnectAsync(serverAddress, port);
+
+            Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine("Connected!");
+            Console.ResetColor();
 
             using var reader = new StreamReader(client.GetStream());
             using var writer = new StreamWriter(client.GetStream()) { AutoFlush = true };
@@ -62,16 +68,20 @@ class Program
                         }
 
                         Console.WriteLine();
-                        Console.WriteLine(line);
+                        PrintColorized(line);
 
                         if (!capturedPasswordMode)
                         {
+                            Console.ForegroundColor = ConsoleColor.DarkYellow;
                             Console.Write(">>> ");
+                            Console.ResetColor();
                             Console.Write(capturedInput);
                         }
                         else
                         {
+                            Console.ForegroundColor = ConsoleColor.DarkYellow;
                             Console.Write(">>> ");
+                            Console.ResetColor();
                             Console.Write(new string('*', capturedInput.Length));
                         }
 
@@ -91,11 +101,16 @@ class Program
                 }
                 catch (Exception ex)
                 {
+                    Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine($"\nConnection lost: {ex.Message}");
+                    Console.ResetColor();
                 }
             });
 
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
             Console.Write(">>> ");
+            Console.ResetColor();
+
             string? inputToSend = null;
             bool shouldExit = false;
 
@@ -129,9 +144,14 @@ class Program
                             int currentLine = Console.CursorTop;
                             Console.SetCursorPosition(0, currentLine);
                             string displayInput = isPasswordMode ? new string('*', currentInput.Length) : currentInput;
+
+                            Console.ForegroundColor = ConsoleColor.DarkYellow;
+                            Console.Write(">>> ");
+                            Console.ResetColor();
+
                             string currentLineContent = ">>> " + displayInput;
                             int spacesNeeded = Math.Max(0, Console.WindowWidth - currentLineContent.Length);
-                            Console.Write(currentLineContent + new string(' ', spacesNeeded));
+                            Console.Write(displayInput + new string(' ', spacesNeeded));
                             Console.SetCursorPosition(4 + cursorPosition, currentLine);
                         }
                     }
@@ -180,7 +200,10 @@ class Program
                     await writer.WriteLineAsync(inputToSend);
                     if (shouldExit) break;
                     inputToSend = null;
+
+                    Console.ForegroundColor = ConsoleColor.DarkYellow;
                     Console.Write(">>> ");
+                    Console.ResetColor();
                 }
             }
 
@@ -189,7 +212,44 @@ class Program
         }
         catch (Exception ex)
         {
+            Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine($"Error: {ex.Message}");
+            Console.ResetColor();
         }
+    }
+
+    static void PrintColorized(string line)
+    {
+        if (line.StartsWith("===") || line.StartsWith("---"))
+        {
+            Console.ForegroundColor = ConsoleColor.Cyan;
+        }
+        else if (line.Contains("CONGRATULATIONS") || line.Contains("wins!") || line.StartsWith("You handed over") || line.Contains("successfully traded"))
+        {
+            Console.ForegroundColor = ConsoleColor.Green;
+        }
+        else if (line.Contains("dead") || line.Contains("strikes down") || line.Contains("roared and fell") || line.StartsWith("You attacked") || line.Contains("error") || line.Contains("Cannot go") || line.Contains("locked") || line.Contains("blocks your path"))
+        {
+            Console.ForegroundColor = ConsoleColor.Red;
+        }
+        else if (line.StartsWith("Exits:") || line.StartsWith("Items here:") || line.StartsWith("Characters here:") || line.StartsWith("Players here:"))
+        {
+            Console.ForegroundColor = ConsoleColor.Yellow;
+        }
+        else if (line.StartsWith("["))
+        {
+            Console.ForegroundColor = ConsoleColor.Magenta;
+        }
+        else if (line.Contains("says: \""))
+        {
+            Console.ForegroundColor = ConsoleColor.DarkCyan;
+        }
+        else
+        {
+            Console.ForegroundColor = ConsoleColor.Gray;
+        }
+
+        Console.WriteLine(line);
+        Console.ResetColor();
     }
 }
