@@ -20,6 +20,7 @@ class Program
          * Anglictina
          * Na vyhru globalne ty itemy
          * command odevzdej
+         * git console, git add *, git commit -m comment, git push --force
          * 
          * 
           */
