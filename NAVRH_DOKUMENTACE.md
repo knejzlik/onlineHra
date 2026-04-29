@@ -1,6 +1,6 @@
 # Návrhový dokument - MUD Online Hra
 
-> Tento dokument není určen ke schválení předem. Má sloužit především vám — jako nástroj pro koordinaci práce, sdílenou představu o řešení a zaznamenání důležitých rozhodnutí během vývoje. Součástí odevzdání bude až v závěrečné fázi projektu.
+
 
 ---
 
@@ -35,7 +35,7 @@
 ┌─────────────────────────────────────────────────────────────┐
 │                    ROZDĚLENÍ PRÁCE                          │
 ├──────────────────────────┬──────────────────────────────────┤
-│      ČLOVĚK S            │         ČLOVĚK L                 │
+│      Slavomír            │          Lukáš                   │
 │      (Server)            │         (Klient + Protokol)      │
 ├──────────────────────────┼──────────────────────────────────┤
 │ • TCP Server             │ • TCP Klient                     │
@@ -378,7 +378,3 @@ Server: =========================================================
     └── onlineHraClient.csproj
 ```
 
----
-
-*Datum vytvoření dokumentu: $(date +%Y-%m-%d)*  
-*Autoři: Člověk S, Člověk L*
