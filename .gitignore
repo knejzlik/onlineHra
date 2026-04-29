@@ -1,6 +1,7 @@
-Nothing should be ignored based on the provided file changes, as they only contain source code files (.cs files) without any build artifacts, dependencies, or temporary files.
-/.vs/onlineHra
-/onlineHra/bin/Debug/net9.0
-/onlineHra/obj
-/onlineHraClient/bin/Debug/net9.0
-/onlineHraClient/obj
+NAVRH_DOKUMENTACE.md is a source document file (.md), which falls under the category of source/config files that should not be ignored according to rule #6 and #7.
+
+Since the change list contains only a source document file and no build artifacts, dependencies, or temp files, the output should be empty.
+
+```gitignore
+
+```
