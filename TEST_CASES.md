@@ -1105,21 +1105,7 @@ Neexistující NPC: wizard
 
 ---
 
-## SHRNUTÍ POKRYTÍ TESTŮ
 
-| Kategorie | Požadovaný počet | Skutečný počet | ID testů |
-|-----------|------------------|----------------|----------|
-| MVP funkce hry | 10+ | 12 | TC001-TC012 |
-| Povinné požadavky I1-I4, P1 | 5 | 5 | TC013-TC017 |
-| Mechanika M1 - Kooperativní sbírání | 2 | 2 | TC018-TC019 |
-| Mechanika M2 - Obchod s NPC | 2 | 2 | TC020-TC021 |
-| Mechanika M3 - Boj s bossem | 2 | 2 | TC022-TC023 |
-| Mechanika M4 - Společné vítězství | 2 | 2 | TC024-TC025 |
-| Mechanika M5 - Persistentní svět | 2 | 2 | TC026-TC027 |
-| Hraniční případy | - | 3 | TC028-TC030 |
-| **Celkem** | **25+** | **30** | |
-
----
 
 ## POKYNY PRO SPOUŠTĚNÍ TESTŮ
 
@@ -1153,11 +1139,3 @@ Neexistující NPC: wizard
 
 ---
 
-## KRITÉRIA ACCEPTANCE
-
-- [ ] Všechny testy s prioritou "Vysoká" musí projít (minimálně 15 testů)
-- [ ] Minimálně 80% všech testů musí projít před odevzdáním (24/30)
-- [ ] Žádný critical bug nalezen během testování (pád serveru, ztráta dat)
-- [ ] Všechny MVP funkce jsou pokryty a fungují
-- [ ] Všechny povinné požadavky I1-I4 a P1 jsou splněny
-- [ ] Všechny zvolené mechaniky M1-M5 jsou implementovány a testovány
