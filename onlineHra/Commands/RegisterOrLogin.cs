@@ -62,6 +62,12 @@ public class RegisterOrLogin : ICommand
                             continue;
                         }
 
+                        if (string.IsNullOrEmpty(password))
+                        {
+                            await tempWriter.WriteLineAsync("Password cannot be empty.");
+                            continue;
+                        }
+
                         if (!playerService.Register(username, password))
                         {
                             await tempWriter.WriteLineAsync("Username already exists.");
@@ -85,6 +91,12 @@ public class RegisterOrLogin : ICommand
                         await tempWriter.WriteLineAsync("Enter password:");
                         await tempWriter.WriteAsync(">>> ");
                         var password = await tempReader.ReadLineAsync();
+
+                        if (string.IsNullOrEmpty(password))
+                        {
+                            await tempWriter.WriteLineAsync("Password cannot be empty.");
+                            continue;
+                        }
 
                         var playerState = playerService.Login(username, password);
 

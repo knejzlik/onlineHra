@@ -35,7 +35,7 @@ public class HelpCommand : ICommand
         sb.AppendLine("drop <item> - drop an item on the ground");
         sb.AppendLine("attack <character> - attack a monster (requires a weapon)");
         sb.AppendLine("trade <item> - offer an item for trade to an NPC");
-        sb.AppendLine("submit <item> - hand over a quest artifact to the High Priest");
+        sb.AppendLine("give <item> [to <player>] - hand over a quest artifact to the High Priest or give an item to a player");
         sb.AppendLine("talk <character> [topic] - talk to an NPC");
         sb.AppendLine("say <message> - send a message to players in the same room");
         sb.AppendLine("whisper <player> <message> - private message to another player");
