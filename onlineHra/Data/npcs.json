@@ -55,7 +55,7 @@
     "Dialogs": [
       {
         "Trigger": "default",
-        "Response": "Welcome. I need the Golden Egg and Dragon Scale to complete the ritual. Use the 'submit' command."
+        "Response": "Welcome. I need the Golden Egg and Dragon Scale to complete the ritual. Use the 'give' command."
       }
     ],
     "Hp": 0,
