@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Configuration;
 ﻿using onlineHra.Networking;
 
 namespace onlineHra;
@@ -12,7 +13,14 @@ class Program
         Console.WriteLine($"Working directory: {Directory.GetCurrentDirectory()}");
         Console.WriteLine($"Base directory: {baseDir}");
         
-        new Server(65525).Start();
+        var configuration = new ConfigurationBuilder()
+            .SetBasePath(baseDir)
+            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+            .Build();
+
+        int port = configuration.GetValue<int>("Server:Port", 65525);
+
+        new Server(port).Start();
         Console.Read();
     }
 

@@ -13,12 +13,14 @@ public class Server
     private LoggingService _logger;
     private readonly object _connectionsLock = new object();
     private Dictionary<string, ICommand> commands;
+    private int _port;
 
     public bool IsGameWon { get; set; } = false;
     public HashSet<string> SubmittedItems { get; set; } = new();
 
     public Server(int port)
     {
+        _port = port;
         var baseDir = AppContext.BaseDirectory;
         Directory.SetCurrentDirectory(baseDir);
 
@@ -34,8 +36,8 @@ public class Server
     public void Start()
     {
         server.Start();
-        Console.WriteLine("Server started on port 65525");
-        _logger.LogInfo("Server started on port 65525");
+        Console.WriteLine($"Server started on port {_port}");
+        _logger.LogInfo($"Server started on port {_port}");
 
         commands.Add("help", new HelpCommand(_worldService, _logger, this));
         commands.Add("explore", new ExploreCommand(_worldService, _logger, this));
