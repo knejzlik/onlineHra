@@ -1,5 +1,6 @@
 using System.Net.Sockets;
 using System.Text;
+using Microsoft.Extensions.Configuration;
 
 namespace onlineHraClient;
 
@@ -12,20 +13,33 @@ class Program
 
     static async Task Main(string[] args)
     {
+        var baseDir = AppContext.BaseDirectory;
+        var configuration = new ConfigurationBuilder()
+            .SetBasePath(baseDir)
+            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+            .Build();
+
+        string defaultAddress = configuration.GetValue<string>("Client:DefaultServerAddress", "localhost") ?? "localhost";
+        int defaultPort = configuration.GetValue<int>("Client:DefaultServerPort", 65525);
+
         Console.ForegroundColor = ConsoleColor.Cyan;
         Console.WriteLine("=== MUD Client ===");
         Console.ResetColor();
 
-        Console.Write("Server address (default: localhost): ");
+        Console.Write($"Server address (default: {defaultAddress}): ");
         var serverAddressInput = Console.ReadLine();
-        var serverAddress = string.IsNullOrWhiteSpace(serverAddressInput) ? "localhost" : serverAddressInput.Trim();
+        var serverAddress = string.IsNullOrWhiteSpace(serverAddressInput) ? defaultAddress : serverAddressInput.Trim();
 
-        Console.Write("Server port (default: 65525): ");
-        var portInput = Console.ReadLine()?.Trim() ?? "65525";
+        Console.Write($"Server port (default: {defaultPort}): ");
+        var portInput = Console.ReadLine()?.Trim();
+        if (string.IsNullOrWhiteSpace(portInput))
+        {
+            portInput = defaultPort.ToString();
+        }
 
         if (!int.TryParse(portInput, out int port))
         {
-            port = 65525;
+            port = defaultPort;
         }
 
         try
